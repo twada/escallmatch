@@ -2,7 +2,8 @@ var esprima = require('esprima'),
     estraverse = require('estraverse'),
     syntax = estraverse.Syntax,
     keys = Object.keys || require('object-keys'),
-    //esprimaOptions = {tolerant: true, loc: true, tokens: true, raw: true},
+    deepEqual = require('deep-equal'),
+    //esprimaOptions = {tolerant: true, loc: true, tokens: true, raw: true};
     esprimaOptions = {tolerant: true};
 
 function createMatcher (pattern) {
@@ -12,40 +13,45 @@ function createMatcher (pattern) {
 
 function Matcher (exampleAst) {
     this.rules = rules(exampleAst);
-    console.log(JSON.stringify(this.rules, null, 2));
 }
-Matcher.prototype.test = function (controller) {
+Matcher.prototype.test = function (currentNode, parentNode) {
     var that = this;
     return keys(that.rules).map(function (key) {
         return that.rules[key];
     }).some(function (val) {
-        val.parentNodes;
+        return matchCallExpWithoutArgs(val.parentNode, parentNode, currentNode);
     });
-    return false;
 };
 
+function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
+    if (!callExp1 || !callExp2) {
+        return false;
+    }
+    if (callExp1.type !== syntax.CallExpression) {
+        return false;
+    }
+    if (callExp2.type !== syntax.CallExpression) {
+        return false;
+    }
+    if (isCalleeOfParent(callExp2, callExp2Child)) {
+        return false;
+    }
+    return deepEqual(callExp1.callee, callExp2.callee);
+}
 
 function rules (exampleAst) {
-    var pathToNode = {};
     var rules = {};
     estraverse.traverse(exampleAst, {
-        enter: function (currentNode, parentNode) {
-            var path = this.path(),
-                espath = path ? path.join('/') : '';
-            pathToNode[espath] = currentNode;
-        },
         leave: function (currentNode, parentNode) {
             var controller = this,
                 path = controller.path(),
                 espath = path ? path.join('/') : '';
             if (currentNode.type === syntax.Identifier && startsWith(currentNode.name, '$')) {
-                // var nodes = [];
-                // collect(nodes, espath, pathToNode);
-                // nodes.shift();
                 rules[currentNode.name] = {
+                    name: currentNode.name,
                     espath: espath,
                     currentNode: currentNode,
-                    parentNodes: controller.parents()
+                    parentNode: parentNode
                 };
             }
         }
@@ -53,21 +59,9 @@ function rules (exampleAst) {
     return rules;
 }
 
-function collect (acc, espath, pathToNode) {
-    var node = pathToNode[espath];
-    if (node) {
-        acc.push(node);
-    }
-    if (espath === '') {
-        return;
-    } else {
-        collect(acc, parentEspath(espath), pathToNode);
-    }
-}
-
-function parentEspath (espath) {
-    var elements = espath.split('/');
-    return elements.slice(0, elements.length - 1).join('/');
+function isCalleeOfParent(parentNode, currentNode) {
+    return (parentNode.type === syntax.CallExpression || parentNode.type === syntax.NewExpression) &&
+        parentNode.callee === currentNode;
 }
 
 function startsWith (str, phrase) {
@@ -80,5 +74,4 @@ function extractExpressionFrom (tree) {
     return expression;
 }
 
-createMatcher.parentEspath = parentEspath;
 module.exports = createMatcher;
