@@ -1,9 +1,9 @@
 var esprima = require('esprima'),
     estraverse = require('estraverse'),
+    espurify = require('espurify'),
     syntax = estraverse.Syntax,
     keys = Object.keys || require('object-keys'),
     deepEqual = require('deep-equal'),
-    //esprimaOptions = {tolerant: true, loc: true, tokens: true, raw: true};
     esprimaOptions = {tolerant: true};
 
 function createMatcher (pattern) {
@@ -36,7 +36,7 @@ function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
     if (isCalleeOfParent(callExp2, callExp2Child)) {
         return false;
     }
-    return deepEqual(callExp1.callee, callExp2.callee);
+    return deepEqual(espurify(callExp1.callee), espurify(callExp2.callee));
 }
 
 function rules (exampleAst) {

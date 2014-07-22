@@ -1,7 +1,6 @@
 var assert = require('assert'),
     esprima = require('esprima'),
-    //esprimaOptions = {tolerant: true, loc: true, tokens: true, raw: true},
-    esprimaOptions = {tolerant: true},
+    esprimaOptions = {tolerant: true, loc: true, tokens: true, raw: true},
     estraverse = require('estraverse'),
     esexample = require('..');
 
@@ -14,10 +13,12 @@ it('generate matcher from given example', function () {
         leave: function (currentNode, parentNode) {
             var matched = matcher.test(currentNode, parentNode);
             if (matched) {
-                collector.push(this);
+                collector.push(currentNode);
             }
         }
     });
 
     assert.equal(collector.length, 1);
+    assert.equal(collector[0].type, 'Identifier');
+    assert.equal(collector[0].name, 'foo');
 });
