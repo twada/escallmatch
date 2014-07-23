@@ -42,3 +42,42 @@ it('two arguments', function () {
         name: 'bar'
     });
 });
+
+it('not Identifier', function () {
+    var matcher = esexample('assert.equal($actual, $expected)');
+    var result = match(matcher, 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })');
+    assert.equal(result.length, 2);
+    assert.deepEqual(espurify(result[0]), {
+        type: 'CallExpression',
+        callee: {
+            type: 'MemberExpression',
+            computed: false,
+            object: {
+                type: 'Identifier',
+                name: 'toto'
+            },
+            property: {
+                type: 'Identifier',
+                name: 'tata'
+            }
+        },
+        arguments: [
+            {
+                type: 'Identifier',
+                name: 'baz'
+            }
+        ]
+    });
+    assert.deepEqual(espurify(result[1]), {
+        type: 'MemberExpression',
+        computed: true,
+        object: {
+            type: 'Identifier',
+            name: 'moo'
+        },
+        property: {
+            type: 'Literal',
+            value: 0
+        }
+    });
+});
