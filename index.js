@@ -14,7 +14,8 @@ function createMatcher (pattern) {
 function Matcher (exampleAst) {
     this.rules = rules(exampleAst);
 }
-Matcher.prototype.test = function (currentNode, parentNode) {
+
+Matcher.prototype.isArgument = function (currentNode, parentNode) {
     var that = this;
     return keys(that.rules).map(function (key) {
         return that.rules[key];
@@ -22,6 +23,7 @@ Matcher.prototype.test = function (currentNode, parentNode) {
         return matchCallExpWithoutArgs(val.parentNode, parentNode, currentNode);
     });
 };
+
 
 function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
     if (!callExp1 || !callExp2) {

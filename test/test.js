@@ -5,12 +5,12 @@ var assert = require('assert'),
     espurify = require('espurify'),
     esexample = require('..');
 
-function match (matcher, jsCode) {
+function extractArguments (matcher, jsCode) {
     var ast = esprima.parse(jsCode, esprimaOptions);
     var collector = [];
     estraverse.traverse(ast, {
         leave: function (currentNode, parentNode) {
-            var matched = matcher.test(currentNode, parentNode);
+            var matched = matcher.isArgument(currentNode, parentNode);
             if (matched) {
                 collector.push(currentNode);
             }
@@ -21,9 +21,9 @@ function match (matcher, jsCode) {
 
 it('single identifier', function () {
     var matcher = esexample('assert($actual)');
-    var result = match(matcher, 'it("test foo", function () { assert(foo); })');
-    assert.equal(result.length, 1);
-    assert.deepEqual(espurify(result[0]), {
+    var args = extractArguments(matcher, 'it("test foo", function () { assert(foo); })');
+    assert.equal(args.length, 1);
+    assert.deepEqual(espurify(args[0]), {
         type: 'Identifier',
         name: 'foo'
     });
@@ -31,13 +31,13 @@ it('single identifier', function () {
 
 it('two arguments', function () {
     var matcher = esexample('assert.equal($actual, $expected)');
-    var result = match(matcher, 'it("test foo and bar", function () { assert.equal(foo, bar); })');
-    assert.equal(result.length, 2);
-    assert.deepEqual(espurify(result[0]), {
+    var args = extractArguments(matcher, 'it("test foo and bar", function () { assert.equal(foo, bar); })');
+    assert.equal(args.length, 2);
+    assert.deepEqual(espurify(args[0]), {
         type: 'Identifier',
         name: 'foo'
     });
-    assert.deepEqual(espurify(result[1]), {
+    assert.deepEqual(espurify(args[1]), {
         type: 'Identifier',
         name: 'bar'
     });
@@ -45,9 +45,9 @@ it('two arguments', function () {
 
 it('not Identifier', function () {
     var matcher = esexample('assert.equal($actual, $expected)');
-    var result = match(matcher, 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })');
-    assert.equal(result.length, 2);
-    assert.deepEqual(espurify(result[0]), {
+    var args = extractArguments(matcher, 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })');
+    assert.equal(args.length, 2);
+    assert.deepEqual(espurify(args[0]), {
         type: 'CallExpression',
         callee: {
             type: 'MemberExpression',
@@ -68,7 +68,7 @@ it('not Identifier', function () {
             }
         ]
     });
-    assert.deepEqual(espurify(result[1]), {
+    assert.deepEqual(espurify(args[1]), {
         type: 'MemberExpression',
         computed: true,
         object: {
