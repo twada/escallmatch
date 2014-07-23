@@ -19,9 +19,42 @@ function extractArguments (matcher, jsCode) {
     return collector;
 }
 
+function extractCalls (matcher, jsCode) {
+    var ast = esprima.parse(jsCode, esprimaOptions);
+    var collector = [];
+    estraverse.traverse(ast, {
+        leave: function (currentNode, parentNode) {
+            var matched = matcher.test(currentNode);
+            if (matched) {
+                collector.push(currentNode);
+            }
+        }
+    });
+    return collector;
+}
+
+
 it('single identifier', function () {
     var matcher = esexample('assert($actual)');
-    var args = extractArguments(matcher, 'it("test foo", function () { assert(foo); })');
+    var targetCode = 'it("test foo", function () { assert(foo); })';
+
+    var calls = extractCalls(matcher, targetCode);
+    assert.equal(calls.length, 1);
+    assert.deepEqual(espurify(calls[0]), {
+        type: 'CallExpression',
+        callee: {
+            type: 'Identifier',
+            name: 'assert'
+        },
+        arguments: [
+            {
+                type: 'Identifier',
+                name: 'foo'
+            }
+        ]
+    });
+
+    var args = extractArguments(matcher, targetCode);
     assert.equal(args.length, 1);
     assert.deepEqual(espurify(args[0]), {
         type: 'Identifier',
@@ -29,9 +62,40 @@ it('single identifier', function () {
     });
 });
 
+
 it('two arguments', function () {
     var matcher = esexample('assert.equal($actual, $expected)');
-    var args = extractArguments(matcher, 'it("test foo and bar", function () { assert.equal(foo, bar); })');
+    var targetCode = 'it("test foo and bar", function () { assert.equal(foo, bar); })';
+
+    var calls = extractCalls(matcher, targetCode);
+    assert.equal(calls.length, 1);
+    assert.deepEqual(espurify(calls[0]), {
+        type: 'CallExpression',
+        callee: {
+            type: 'MemberExpression',
+            computed: false,
+            object: {
+                type: 'Identifier',
+                name: 'assert'
+            },
+            property: {
+                type: 'Identifier',
+                name: 'equal'
+            }
+        },
+        arguments: [
+            {
+                type: 'Identifier',
+                name: 'foo'
+            },
+            {
+                type: 'Identifier',
+                name: 'bar'
+            }
+        ]
+    });
+
+    var args = extractArguments(matcher, targetCode);
     assert.equal(args.length, 2);
     assert.deepEqual(espurify(args[0]), {
         type: 'Identifier',
@@ -42,6 +106,7 @@ it('two arguments', function () {
         name: 'bar'
     });
 });
+
 
 it('not Identifier', function () {
     var matcher = esexample('assert.equal($actual, $expected)');

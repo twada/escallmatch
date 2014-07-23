@@ -24,6 +24,14 @@ Matcher.prototype.isArgument = function (currentNode, parentNode) {
     });
 };
 
+Matcher.prototype.test = function (currentNode) {
+    var that = this;
+    return keys(that.rules).map(function (key) {
+        return that.rules[key];
+    }).some(function (val) {
+        return matchCallExpWithoutArgs(val.parentNode, currentNode);
+    });
+};
 
 function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
     if (!callExp1 || !callExp2) {
@@ -35,7 +43,7 @@ function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
     if (callExp2.type !== syntax.CallExpression) {
         return false;
     }
-    if (isCalleeOfParent(callExp2, callExp2Child)) {
+    if (callExp2Child && isCalleeOfParent(callExp2, callExp2Child)) {
         return false;
     }
     return deepEqual(espurify(callExp1.callee), espurify(callExp2.callee));
