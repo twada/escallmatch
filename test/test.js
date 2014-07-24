@@ -34,6 +34,7 @@ function extractCalls (matcher, jsCode) {
 }
 
 
+
 it('single identifier', function () {
     var matcher = esexample('assert($actual)');
     var targetCode = 'it("test foo", function () { assert(foo); })';
@@ -61,6 +62,7 @@ it('single identifier', function () {
         name: 'foo'
     });
 });
+
 
 
 it('two arguments', function () {
@@ -108,9 +110,65 @@ it('two arguments', function () {
 });
 
 
+
 it('not Identifier', function () {
     var matcher = esexample('assert.equal($actual, $expected)');
-    var args = extractArguments(matcher, 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })');
+    var targetCode = 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })';
+
+    var calls = extractCalls(matcher, targetCode);
+    assert.equal(calls.length, 1);
+    assert.deepEqual(espurify(calls[0]), {
+        type: 'CallExpression',
+        callee: {
+            type: 'MemberExpression',
+            computed: false,
+            object: {
+                type: 'Identifier',
+                name: 'assert'
+            },
+            property: {
+                type: 'Identifier',
+                name: 'equal'
+            }
+        },
+        arguments: [
+            {
+                type: 'CallExpression',
+                callee: {
+                    type: 'MemberExpression',
+                    computed: false,
+                    object: {
+                        type: 'Identifier',
+                        name: 'toto'
+                    },
+                    property: {
+                        type: 'Identifier',
+                        name: 'tata'
+                    }
+                },
+                arguments: [
+                    {
+                        type: 'Identifier',
+                        name: 'baz'
+                    }
+                ]
+            },
+            {
+                type: 'MemberExpression',
+                computed: true,
+                object: {
+                    type: 'Identifier',
+                    name: 'moo'
+                },
+                property: {
+                    type: 'Literal',
+                    value: 0
+                }
+            }
+        ]
+    });
+
+    var args = extractArguments(matcher, targetCode);
     assert.equal(args.length, 2);
     assert.deepEqual(espurify(args[0]), {
         type: 'CallExpression',
