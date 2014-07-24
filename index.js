@@ -15,21 +15,21 @@ function Matcher (exampleAst) {
     this.rules = rules(exampleAst);
 }
 
-Matcher.prototype.isArgument = function (currentNode, parentNode) {
-    var that = this;
-    return keys(that.rules).map(function (key) {
-        return that.rules[key];
-    }).some(function (val) {
-        return matchCallExpWithoutArgs(val.parentNode, parentNode, currentNode);
-    });
-};
-
 Matcher.prototype.test = function (currentNode) {
     var that = this;
     return keys(that.rules).map(function (key) {
         return that.rules[key];
     }).some(function (val) {
         return matchCallExpWithoutArgs(val.parentNode, currentNode);
+    });
+};
+
+Matcher.prototype.isArgument = function (currentNode, parentNode) {
+    var that = this;
+    return keys(that.rules).map(function (key) {
+        return that.rules[key];
+    }).some(function (val) {
+        return matchCallExpWithoutArgs(val.parentNode, parentNode, currentNode);
     });
 };
 
