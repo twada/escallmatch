@@ -46,7 +46,28 @@ function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
     if (callExp2Child && isCalleeOfParent(callExp2, callExp2Child)) {
         return false;
     }
+
+    var depth1 = astDepth(callExp1.callee);
+    var depth2 = astDepth(callExp2.callee);
+    if (depth1 !== depth2) {
+        return false;
+    }
+
     return deepEqual(espurify(callExp1.callee), espurify(callExp2.callee));
+}
+
+function astDepth (ast) {
+    var maxDepth = 0;
+    estraverse.traverse(ast, {
+        enter: function (currentNode, parentNode) {
+            var path = this.path(),
+                currentDepth = path ? path.length : 0;
+            if (maxDepth < currentDepth) {
+                maxDepth = currentDepth;
+            }
+        }
+    });
+    return maxDepth;
 }
 
 function rules (exampleAst) {
