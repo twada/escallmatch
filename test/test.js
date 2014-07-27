@@ -3,7 +3,7 @@ var assert = require('assert'),
     esprimaOptions = {tolerant: true, loc: true, tokens: true, raw: true},
     estraverse = require('estraverse'),
     espurify = require('espurify'),
-    esexample = require('..');
+    escallmatch = require('..');
 
 function extractArguments (matcher, jsCode) {
     var ast = esprima.parse(jsCode, esprimaOptions);
@@ -36,7 +36,7 @@ function extractCalls (matcher, jsCode) {
 
 
 it('single identifier', function () {
-    var matcher = esexample('assert($actual)');
+    var matcher = escallmatch('assert($actual)');
     var targetCode = 'it("test foo", function () { assert(foo); })';
 
     var calls = extractCalls(matcher, targetCode);
@@ -66,7 +66,7 @@ it('single identifier', function () {
 
 
 it('two arguments', function () {
-    var matcher = esexample('assert.equal($actual, $expected)');
+    var matcher = escallmatch('assert.equal($actual, $expected)');
     var targetCode = 'it("test foo and bar", function () { assert.equal(foo, bar); })';
 
     var calls = extractCalls(matcher, targetCode);
@@ -112,7 +112,7 @@ it('two arguments', function () {
 
 
 it('not Identifier', function () {
-    var matcher = esexample('assert.equal($actual, $expected)');
+    var matcher = escallmatch('assert.equal($actual, $expected)');
     var targetCode = 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })';
 
     var calls = extractCalls(matcher, targetCode);
