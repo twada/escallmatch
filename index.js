@@ -12,7 +12,6 @@ function createMatcher (pattern) {
 
 function Matcher (exampleAst) {
     this.exampleAst = exampleAst;
-    this.rules = rules(exampleAst);
 }
 
 Matcher.prototype.test = function (currentNode) {
@@ -20,12 +19,11 @@ Matcher.prototype.test = function (currentNode) {
 };
 
 Matcher.prototype.isArgument = function (currentNode, parentNode) {
-    var that = this;
-    return keys(that.rules).map(function (key) {
-        return that.rules[key];
-    }).some(function (val) {
-        return matchCallExpWithoutArgs(val.parentNode, parentNode, currentNode);
-    });
+    var indexOfCurrentArg, exampleIdent;
+    if (matchCallExpWithoutArgs(this.exampleAst, parentNode)) {
+        indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
+        return indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length;
+    }
 };
 
 function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
@@ -63,26 +61,6 @@ function astDepth (ast) {
         }
     });
     return maxDepth;
-}
-
-function rules (exampleAst) {
-    var rules = {};
-    estraverse.traverse(exampleAst, {
-        leave: function (currentNode, parentNode) {
-            var controller = this,
-                path = controller.path(),
-                espath = path ? path.join('/') : '';
-            if (currentNode.type === syntax.Identifier && startsWith(currentNode.name, '$')) {
-                rules[currentNode.name] = {
-                    name: currentNode.name,
-                    espath: espath,
-                    currentNode: currentNode,
-                    parentNode: parentNode
-                };
-            }
-        }
-    });
-    return rules;
 }
 
 function isCalleeOfParent(parentNode, currentNode) {
