@@ -3,25 +3,20 @@ var esprima = require('esprima'),
     espurify = require('espurify'),
     syntax = estraverse.Syntax,
     keys = Object.keys || require('object-keys'),
-    deepEqual = require('deep-equal'),
-    esprimaOptions = {tolerant: true};
+    deepEqual = require('deep-equal');
 
 function createMatcher (pattern) {
-    var ast = extractExpressionFrom(esprima.parse(pattern, esprimaOptions));
+    var ast = extractExpressionFrom(esprima.parse(pattern));
     return new Matcher(ast);
 }
 
 function Matcher (exampleAst) {
+    this.exampleAst = exampleAst;
     this.rules = rules(exampleAst);
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var that = this;
-    return keys(that.rules).map(function (key) {
-        return that.rules[key];
-    }).some(function (val) {
-        return matchCallExpWithoutArgs(val.parentNode, currentNode);
-    });
+    return matchCallExpWithoutArgs(this.exampleAst, currentNode);
 };
 
 Matcher.prototype.isArgument = function (currentNode, parentNode) {
