@@ -40,17 +40,55 @@ describe('wildcard identifier assert($actual)', function () {
     });
     it('single identifier', function () {
         var targetCode = 'it("test foo", function () { assert(foo); })';
-        assert.equal(extractCalls(this.matcher, targetCode).length, 1);
+        var calls = extractCalls(this.matcher, targetCode);
+        var args = extractArguments(this.matcher, targetCode);
+        assert.equal(calls.length, 1);
+        assert.equal(args.length, 1);
     });
     it('optional parameter', function () {
         var targetCode = 'it("test foo", function () { assert(foo, "message"); })';
-        assert.equal(extractCalls(this.matcher, targetCode).length, 1);
+        var calls = extractCalls(this.matcher, targetCode);
+        var args = extractArguments(this.matcher, targetCode);
+        assert.equal(calls.length, 1);
+        assert.equal(args.length, 1);
     });
     it('no params', function () {
         var targetCode = 'it("test foo", function () { assert(); })';
-        assert.equal(extractCalls(this.matcher, targetCode).length, 0);
+        var calls = extractCalls(this.matcher, targetCode);
+        var args = extractArguments(this.matcher, targetCode);
+        assert.equal(calls.length, 0);
+        assert.equal(args.length, 0);
     });
 });
+
+
+describe('wildcard two args assert.equal($actual, $expected)', function () {
+    beforeEach(function () {
+        this.matcher = escallmatch('assert.equal($actual, $expected)');
+    });
+    it('capture arguments', function () {
+        var targetCode = 'it("test foo and bar", function () { assert.equal(foo, bar); })';
+        var calls = extractCalls(this.matcher, targetCode);
+        var args = extractArguments(this.matcher, targetCode);
+        assert.equal(calls.length, 1);
+        assert.equal(args.length, 2);
+    });
+    it('optional parameters', function () {
+        var targetCode = 'it("test foo and bar", function () { assert.equal(foo, bar, "message"); })';
+        var calls = extractCalls(this.matcher, targetCode);
+        var args = extractArguments(this.matcher, targetCode);
+        assert.equal(calls.length, 1);
+        assert.equal(args.length, 2);
+    });
+    it('less parameters', function () {
+        var targetCode = 'it("test foo and bar", function () { assert.equal(foo); })';
+        var calls = extractCalls(this.matcher, targetCode);
+        var args = extractArguments(this.matcher, targetCode);
+        assert.equal(calls.length, 0);
+        assert.equal(args.length, 0);
+    });
+});
+
 
 
 it('single identifier', function () {
