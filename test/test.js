@@ -47,163 +47,125 @@ function extractCalls (matcher, jsCode) {
     return collector;
 }
 
+function matchAgainst (that, targetCode) {
+    that.calls = extractCalls(that.matcher, targetCode);
+    that.args = extractArguments(that.matcher, targetCode);
+    that.captured = captureArguments(that.matcher, targetCode);
+}
 
-describe('wildcard identifier assert($actual)', function () {
+
+describe('wildcard identifier assert(actual)', function () {
     beforeEach(function () {
-        this.matcher = escallmatch('assert($actual)');
+        this.matcher = escallmatch('assert(actual)');
     });
     it('single identifier', function () {
-        var targetCode = 'it("test foo", function () { assert(foo); })';
-        var calls = extractCalls(this.matcher, targetCode);
-        var args = extractArguments(this.matcher, targetCode);
-        assert.equal(calls.length, 1);
-        assert.equal(args.length, 1);
-        var captured = captureArguments(this.matcher, targetCode);
-        assert(captured['$actual']);
-        assert.equal(captured['$actual'].name, 'foo');
-    });
-    it('optional parameter', function () {
-        var targetCode = 'it("test foo", function () { assert(foo, "message"); })';
-        var calls = extractCalls(this.matcher, targetCode);
-        var args = extractArguments(this.matcher, targetCode);
-        assert.equal(calls.length, 1);
-        assert.equal(args.length, 1);
-        var captured = captureArguments(this.matcher, targetCode);
-        assert(captured['$actual']);
-        assert.equal(captured['$actual'].name, 'foo');
-    });
-    it('no params', function () {
-        var targetCode = 'it("test foo", function () { assert(); })';
-        var calls = extractCalls(this.matcher, targetCode);
-        var args = extractArguments(this.matcher, targetCode);
-        assert.equal(calls.length, 0);
-        assert.equal(args.length, 0);
-        var captured = captureArguments(this.matcher, targetCode);
-        assert(! captured['$actual']);
-    });
-});
-
-
-describe('wildcard two args assert.equal($actual, $expected)', function () {
-    beforeEach(function () {
-        this.matcher = escallmatch('assert.equal($actual, $expected)');
-    });
-    it('capture arguments', function () {
-        var targetCode = 'it("test foo and bar", function () { assert.equal(foo, bar); })';
-        var calls = extractCalls(this.matcher, targetCode);
-        var args = extractArguments(this.matcher, targetCode);
-        assert.equal(calls.length, 1);
-        assert.equal(args.length, 2);
-        var captured = captureArguments(this.matcher, targetCode);
-        assert(captured['$actual']);
-        assert.equal(captured['$actual'].name, 'foo');
-        assert(captured['$expected']);
-        assert.equal(captured['$expected'].name, 'bar');
-    });
-    it('optional parameters', function () {
-        var targetCode = 'it("test foo and bar", function () { assert.equal(foo, bar, "message"); })';
-        var calls = extractCalls(this.matcher, targetCode);
-        var args = extractArguments(this.matcher, targetCode);
-        assert.equal(calls.length, 1);
-        assert.equal(args.length, 2);
-        var captured = captureArguments(this.matcher, targetCode);
-        assert(captured['$actual']);
-        assert.equal(captured['$actual'].name, 'foo');
-        assert(captured['$expected']);
-        assert.equal(captured['$expected'].name, 'bar');
-    });
-    it('less parameters', function () {
-        var targetCode = 'it("test foo and bar", function () { assert.equal(foo); })';
-        var calls = extractCalls(this.matcher, targetCode);
-        var args = extractArguments(this.matcher, targetCode);
-        assert.equal(calls.length, 0);
-        assert.equal(args.length, 0);
-        var captured = captureArguments(this.matcher, targetCode);
-        assert(! captured['$actual']);
-        assert(! captured['$expected']);
-    });
-});
-
-
-
-it('single identifier', function () {
-    var matcher = escallmatch('assert($actual)');
-    var targetCode = 'it("test foo", function () { assert(foo); })';
-
-    var calls = extractCalls(matcher, targetCode);
-    assert.equal(calls.length, 1);
-    assert.deepEqual(espurify(calls[0]), {
-        type: 'CallExpression',
-        callee: {
-            type: 'Identifier',
-            name: 'assert'
-        },
-        arguments: [
-            {
-                type: 'Identifier',
-                name: 'foo'
-            }
-        ]
-    });
-
-    var args = extractArguments(matcher, targetCode);
-    assert.equal(args.length, 1);
-    assert.deepEqual(espurify(args[0]), {
-        type: 'Identifier',
-        name: 'foo'
-    });
-});
-
-
-
-it('two arguments', function () {
-    var matcher = escallmatch('assert.equal($actual, $expected)');
-    var targetCode = 'it("test foo and bar", function () { assert.equal(foo, bar); })';
-
-    var calls = extractCalls(matcher, targetCode);
-    assert.equal(calls.length, 1);
-    assert.deepEqual(espurify(calls[0]), {
-        type: 'CallExpression',
-        callee: {
-            type: 'MemberExpression',
-            computed: false,
-            object: {
+        matchAgainst(this, 'it("test foo", function () { assert(foo); })');
+        assert.equal(this.calls.length, 1);
+        assert.equal(this.args.length, 1);
+        assert(this.captured['actual']);
+        assert.equal(this.captured['actual'].name, 'foo');
+        assert.deepEqual(espurify(this.calls[0]), {
+            type: 'CallExpression',
+            callee: {
                 type: 'Identifier',
                 name: 'assert'
             },
-            property: {
-                type: 'Identifier',
-                name: 'equal'
-            }
-        },
-        arguments: [
-            {
-                type: 'Identifier',
-                name: 'foo'
-            },
-            {
-                type: 'Identifier',
-                name: 'bar'
-            }
-        ]
+            arguments: [
+                {
+                    type: 'Identifier',
+                    name: 'foo'
+                }
+            ]
+        });
+        assert.deepEqual(espurify(this.args[0]), {
+            type: 'Identifier',
+            name: 'foo'
+        });
     });
+    it('optional parameter', function () {
+        matchAgainst(this, 'it("test foo", function () { assert(foo, "message"); })');
+        assert.equal(this.calls.length, 1);
+        assert.equal(this.args.length, 1);
+        assert(this.captured['actual']);
+        assert.equal(this.captured['actual'].name, 'foo');
+    });
+    it('no params', function () {
+        matchAgainst(this, 'it("test foo", function () { assert(); })');
+        assert.equal(this.calls.length, 0);
+        assert.equal(this.args.length, 0);
+        assert(! this.captured['actual']);
+    });
+});
 
-    var args = extractArguments(matcher, targetCode);
-    assert.equal(args.length, 2);
-    assert.deepEqual(espurify(args[0]), {
-        type: 'Identifier',
-        name: 'foo'
+
+describe('wildcard two args assert.equal(actual, expected)', function () {
+    beforeEach(function () {
+        this.matcher = escallmatch('assert.equal(actual, expected)');
     });
-    assert.deepEqual(espurify(args[1]), {
-        type: 'Identifier',
-        name: 'bar'
+    it('capture arguments', function () {
+        matchAgainst(this, 'it("test foo and bar", function () { assert.equal(foo, bar); })');
+        assert.equal(this.calls.length, 1);
+        assert.equal(this.args.length, 2);
+        assert(this.captured['actual']);
+        assert.equal(this.captured['actual'].name, 'foo');
+        assert(this.captured['expected']);
+        assert.equal(this.captured['expected'].name, 'bar');
+        assert.deepEqual(espurify(this.calls[0]), {
+            type: 'CallExpression',
+            callee: {
+                type: 'MemberExpression',
+                computed: false,
+                object: {
+                    type: 'Identifier',
+                    name: 'assert'
+                },
+                property: {
+                    type: 'Identifier',
+                    name: 'equal'
+                }
+            },
+            arguments: [
+                {
+                    type: 'Identifier',
+                    name: 'foo'
+                },
+                {
+                    type: 'Identifier',
+                    name: 'bar'
+                }
+            ]
+        });
+        assert.deepEqual(espurify(this.args[0]), {
+            type: 'Identifier',
+            name: 'foo'
+        });
+        assert.deepEqual(espurify(this.args[1]), {
+            type: 'Identifier',
+            name: 'bar'
+        });
+    });
+    it('optional parameters', function () {
+        matchAgainst(this, 'it("test foo and bar", function () { assert.equal(foo, bar, "message"); })');
+        assert.equal(this.calls.length, 1);
+        assert.equal(this.args.length, 2);
+        assert(this.captured['actual']);
+        assert.equal(this.captured['actual'].name, 'foo');
+        assert(this.captured['expected']);
+        assert.equal(this.captured['expected'].name, 'bar');
+    });
+    it('less parameters', function () {
+        matchAgainst(this, 'it("test foo and bar", function () { assert.equal(foo); })');
+        assert.equal(this.calls.length, 0);
+        assert.equal(this.args.length, 0);
+        assert(! this.captured['actual']);
+        assert(! this.captured['expected']);
     });
 });
 
 
 
 it('not Identifier', function () {
-    var matcher = escallmatch('assert.equal($actual, $expected)');
+    var matcher = escallmatch('assert.equal(actual, expected)');
     var targetCode = 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })';
 
     var calls = extractCalls(matcher, targetCode);
