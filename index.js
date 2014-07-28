@@ -30,7 +30,12 @@ Matcher.prototype.isCaptured = function (currentNode, parentNode) {
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
         if (indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length) {
-            return this.exampleAst.arguments[indexOfCurrentArg].name;
+            var node = this.exampleAst.arguments[indexOfCurrentArg];
+            if (node.type === syntax.Identifier) {
+                return node.name;
+            } else if (node.type === syntax.ArrayExpression) {
+                return node.elements[0].name;
+            }
         }
     }
     return null;
