@@ -24,6 +24,9 @@ Matcher.prototype.test = function (currentNode) {
 
 Matcher.prototype.isArgument = function (currentNode, parentNode) {
     var indexOfCurrentArg, exampleIdent;
+    if (isCalleeOfParent(currentNode, parentNode)) {
+        return false;
+    }
     if (matchCallee(this.exampleAst, parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
         return indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length;
@@ -31,7 +34,7 @@ Matcher.prototype.isArgument = function (currentNode, parentNode) {
     return false;
 };
 
-function matchCallee(callExp1, callExp2, callExp2Child) {
+function matchCallee(callExp1, callExp2) {
     if (!callExp1 || !callExp2) {
         return false;
     }
@@ -39,9 +42,6 @@ function matchCallee(callExp1, callExp2, callExp2Child) {
         return false;
     }
     if (callExp2.type !== syntax.CallExpression) {
-        return false;
-    }
-    if (callExp2Child && isCalleeOfParent(callExp2, callExp2Child)) {
         return false;
     }
 
@@ -68,8 +68,9 @@ function astDepth (ast) {
     return maxDepth;
 }
 
-function isCalleeOfParent(parentNode, currentNode) {
-    return (parentNode.type === syntax.CallExpression || parentNode.type === syntax.NewExpression) &&
+function isCalleeOfParent(currentNode, parentNode) {
+    return parentNode && currentNode &&
+        (parentNode.type === syntax.CallExpression || parentNode.type === syntax.NewExpression) &&
         parentNode.callee === currentNode;
 }
 
