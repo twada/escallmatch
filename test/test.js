@@ -34,6 +34,24 @@ function extractCalls (matcher, jsCode) {
 }
 
 
+describe('wildcard identifier assert($actual)', function () {
+    beforeEach(function () {
+        this.matcher = escallmatch('assert($actual)');
+    });
+    it('single identifier', function () {
+        var targetCode = 'it("test foo", function () { assert(foo); })';
+        assert.equal(extractCalls(this.matcher, targetCode).length, 1);
+    });
+    it('optional parameter', function () {
+        var targetCode = 'it("test foo", function () { assert(foo, "message"); })';
+        assert.equal(extractCalls(this.matcher, targetCode).length, 1);
+    });
+    it('no params', function () {
+        var targetCode = 'it("test foo", function () { assert(); })';
+        assert.equal(extractCalls(this.matcher, targetCode).length, 0);
+    });
+});
+
 
 it('single identifier', function () {
     var matcher = escallmatch('assert($actual)');
