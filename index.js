@@ -17,7 +17,7 @@ function Matcher (exampleAst) {
 Matcher.prototype.test = function (currentNode) {
     var calleeMatched = matchCallee(this.exampleAst, currentNode);
     if (calleeMatched) {
-        return this.exampleAst.arguments.length <= currentNode.arguments.length;
+        return this.exampleAst.arguments.length === currentNode.arguments.length;
     }
     return false;
 };

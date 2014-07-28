@@ -89,10 +89,9 @@ describe('wildcard identifier assert(actual)', function () {
     });
     it('optional parameter', function () {
         var matched = matchCode(this.matcher, 'it("test foo", function () { assert(foo, "message"); })');
-        assert.equal(matched.calls.length, 1);
-        assert.equal(matched.args.length, 1);
-        assert(matched.captured['actual']);
-        assert.equal(matched.captured['actual'].name, 'foo');
+        assert.equal(matched.calls.length, 0);
+        assert.equal(matched.args.length, 0);
+        assert(! matched.captured['actual']);
     });
     it('no params', function () {
         var matched = matchCode(this.matcher, 'it("test foo", function () { assert(); })');
@@ -151,12 +150,10 @@ describe('wildcard two args assert.equal(actual, expected)', function () {
     });
     it('optional parameters', function () {
         var matched = matchCode(this.matcher, 'it("test foo and bar", function () { assert.equal(foo, bar, "message"); })');
-        assert.equal(matched.calls.length, 1);
-        assert.equal(matched.args.length, 2);
-        assert(matched.captured['actual']);
-        assert.equal(matched.captured['actual'].name, 'foo');
-        assert(matched.captured['expected']);
-        assert.equal(matched.captured['expected'].name, 'bar');
+        assert.equal(matched.calls.length, 0);
+        assert.equal(matched.args.length, 0);
+        assert(! matched.captured['actual']);
+        assert(! matched.captured['expected']);
     });
     it('less parameters', function () {
         var matched = matchCode(this.matcher, 'it("test foo and bar", function () { assert.equal(foo); })');
