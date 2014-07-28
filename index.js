@@ -24,6 +24,7 @@ Matcher.prototype.isArgument = function (currentNode, parentNode) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
         return indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length;
     }
+    return false;
 };
 
 function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
