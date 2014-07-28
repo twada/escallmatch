@@ -10,7 +10,7 @@ function extractArguments (matcher, jsCode) {
     var collector = [];
     estraverse.traverse(ast, {
         leave: function (currentNode, parentNode) {
-            var matched = matcher.isArgument(currentNode, parentNode);
+            var matched = matcher.isCaptured(currentNode, parentNode);
             if (matched) {
                 collector.push(currentNode);
             }

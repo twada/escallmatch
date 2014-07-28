@@ -22,7 +22,7 @@ Matcher.prototype.test = function (currentNode) {
     return false;
 };
 
-Matcher.prototype.isArgument = function (currentNode, parentNode) {
+Matcher.prototype.isCaptured = function (currentNode, parentNode) {
     var indexOfCurrentArg, exampleIdent;
     if (isCalleeOfParent(currentNode, parentNode)) {
         return false;
