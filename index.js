@@ -27,7 +27,7 @@ Matcher.prototype.isCaptured = function (currentNode, parentNode) {
     if (isCalleeOfParent(currentNode, parentNode)) {
         return false;
     }
-    if (matchCallee(this.exampleAst, parentNode)) {
+    if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
         return indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length;
     }
