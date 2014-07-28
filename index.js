@@ -23,15 +23,17 @@ Matcher.prototype.test = function (currentNode) {
 };
 
 Matcher.prototype.isCaptured = function (currentNode, parentNode) {
-    var indexOfCurrentArg, exampleIdent;
+    var indexOfCurrentArg;
     if (isCalleeOfParent(currentNode, parentNode)) {
-        return false;
+        return null;
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
-        return indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length;
+        if (indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length) {
+            return this.exampleAst.arguments[indexOfCurrentArg].name;
+        }
     }
-    return false;
+    return null;
 };
 
 function matchCallee(callExp1, callExp2) {

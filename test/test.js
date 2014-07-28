@@ -5,6 +5,20 @@ var assert = require('assert'),
     espurify = require('espurify'),
     escallmatch = require('..');
 
+function captureArguments (matcher, jsCode) {
+    var ast = esprima.parse(jsCode, esprimaOptions);
+    var collector = {};
+    estraverse.traverse(ast, {
+        leave: function (currentNode, parentNode) {
+            var name = matcher.isCaptured(currentNode, parentNode);
+            if (name) {
+                collector[name] = currentNode;
+            }
+        }
+    });
+    return collector;
+}
+
 function extractArguments (matcher, jsCode) {
     var ast = esprima.parse(jsCode, esprimaOptions);
     var collector = [];
@@ -44,6 +58,9 @@ describe('wildcard identifier assert($actual)', function () {
         var args = extractArguments(this.matcher, targetCode);
         assert.equal(calls.length, 1);
         assert.equal(args.length, 1);
+        var captured = captureArguments(this.matcher, targetCode);
+        assert(captured['$actual']);
+        assert.equal(captured['$actual'].name, 'foo');
     });
     it('optional parameter', function () {
         var targetCode = 'it("test foo", function () { assert(foo, "message"); })';
@@ -51,6 +68,9 @@ describe('wildcard identifier assert($actual)', function () {
         var args = extractArguments(this.matcher, targetCode);
         assert.equal(calls.length, 1);
         assert.equal(args.length, 1);
+        var captured = captureArguments(this.matcher, targetCode);
+        assert(captured['$actual']);
+        assert.equal(captured['$actual'].name, 'foo');
     });
     it('no params', function () {
         var targetCode = 'it("test foo", function () { assert(); })';
@@ -58,6 +78,8 @@ describe('wildcard identifier assert($actual)', function () {
         var args = extractArguments(this.matcher, targetCode);
         assert.equal(calls.length, 0);
         assert.equal(args.length, 0);
+        var captured = captureArguments(this.matcher, targetCode);
+        assert(! captured['$actual']);
     });
 });
 
@@ -72,6 +94,11 @@ describe('wildcard two args assert.equal($actual, $expected)', function () {
         var args = extractArguments(this.matcher, targetCode);
         assert.equal(calls.length, 1);
         assert.equal(args.length, 2);
+        var captured = captureArguments(this.matcher, targetCode);
+        assert(captured['$actual']);
+        assert.equal(captured['$actual'].name, 'foo');
+        assert(captured['$expected']);
+        assert.equal(captured['$expected'].name, 'bar');
     });
     it('optional parameters', function () {
         var targetCode = 'it("test foo and bar", function () { assert.equal(foo, bar, "message"); })';
@@ -79,6 +106,11 @@ describe('wildcard two args assert.equal($actual, $expected)', function () {
         var args = extractArguments(this.matcher, targetCode);
         assert.equal(calls.length, 1);
         assert.equal(args.length, 2);
+        var captured = captureArguments(this.matcher, targetCode);
+        assert(captured['$actual']);
+        assert.equal(captured['$actual'].name, 'foo');
+        assert(captured['$expected']);
+        assert.equal(captured['$expected'].name, 'bar');
     });
     it('less parameters', function () {
         var targetCode = 'it("test foo and bar", function () { assert.equal(foo); })';
@@ -86,6 +118,9 @@ describe('wildcard two args assert.equal($actual, $expected)', function () {
         var args = extractArguments(this.matcher, targetCode);
         assert.equal(calls.length, 0);
         assert.equal(args.length, 0);
+        var captured = captureArguments(this.matcher, targetCode);
+        assert(! captured['$actual']);
+        assert(! captured['$expected']);
     });
 });
 
