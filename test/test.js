@@ -59,7 +59,31 @@ var matchCode = (function () {
 
 
 
-describe('wildcard identifier assert(actual)', function () {
+describe('optional parameter assert(actual, [message])', function () {
+    beforeEach(function () {
+        this.matcher = escallmatch('assert(actual, [message])');
+    });
+    it('with message', function () {
+        var matched = matchCode(this.matcher, 'it("test foo", function () { assert(foo, "message"); })');
+        assert.equal(matched.calls.length, 1);
+        assert.equal(matched.args.length, 2);
+        assert(matched.captured['actual']);
+        assert(matched.captured['message']);
+        assert.deepEqual(espurify(matched.captured['actual']), {
+            type: 'Identifier',
+            name: 'foo'
+        });
+        assert.deepEqual(espurify(matched.captured['message']), {
+            type: 'Literal',
+            value: 'message'
+        });
+    });
+});
+
+
+
+
+describe('one argument assert(actual)', function () {
     beforeEach(function () {
         this.matcher = escallmatch('assert(actual)');
     });
@@ -102,7 +126,7 @@ describe('wildcard identifier assert(actual)', function () {
 });
 
 
-describe('wildcard two args assert.equal(actual, expected)', function () {
+describe('two args assert.equal(actual, expected)', function () {
     beforeEach(function () {
         this.matcher = escallmatch('assert.equal(actual, expected)');
     });
