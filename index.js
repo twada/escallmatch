@@ -15,7 +15,11 @@ function Matcher (exampleAst) {
 }
 
 Matcher.prototype.test = function (currentNode) {
-    return matchCallExpWithoutArgs(this.exampleAst, currentNode);
+    var calleeMatched = matchCallExpWithoutArgs(this.exampleAst, currentNode);
+    if (calleeMatched) {
+        return this.exampleAst.arguments.length <= currentNode.arguments.length;
+    }
+    return false;
 };
 
 Matcher.prototype.isArgument = function (currentNode, parentNode) {
