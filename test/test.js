@@ -5,53 +5,58 @@ var assert = require('assert'),
     espurify = require('espurify'),
     escallmatch = require('..');
 
-function captureArguments (matcher, jsCode) {
-    var ast = esprima.parse(jsCode, esprimaOptions);
-    var collector = {};
-    estraverse.traverse(ast, {
-        leave: function (currentNode, parentNode) {
-            var name = matcher.isCaptured(currentNode, parentNode);
-            if (name) {
-                collector[name] = currentNode;
+var matchCode = (function () {
+    function captureArguments (matcher, jsCode) {
+        var ast = esprima.parse(jsCode, esprimaOptions);
+        var collector = {};
+        estraverse.traverse(ast, {
+            leave: function (currentNode, parentNode) {
+                var name = matcher.isCaptured(currentNode, parentNode);
+                if (name) {
+                    collector[name] = currentNode;
+                }
             }
-        }
-    });
-    return collector;
-}
+        });
+        return collector;
+    }
 
-function extractArguments (matcher, jsCode) {
-    var ast = esprima.parse(jsCode, esprimaOptions);
-    var collector = [];
-    estraverse.traverse(ast, {
-        leave: function (currentNode, parentNode) {
-            var matched = matcher.isCaptured(currentNode, parentNode);
-            if (matched) {
-                collector.push(currentNode);
+    function extractArguments (matcher, jsCode) {
+        var ast = esprima.parse(jsCode, esprimaOptions);
+        var collector = [];
+        estraverse.traverse(ast, {
+            leave: function (currentNode, parentNode) {
+                var matched = matcher.isCaptured(currentNode, parentNode);
+                if (matched) {
+                    collector.push(currentNode);
+                }
             }
-        }
-    });
-    return collector;
-}
+        });
+        return collector;
+    }
 
-function extractCalls (matcher, jsCode) {
-    var ast = esprima.parse(jsCode, esprimaOptions);
-    var collector = [];
-    estraverse.traverse(ast, {
-        leave: function (currentNode, parentNode) {
-            var matched = matcher.test(currentNode);
-            if (matched) {
-                collector.push(currentNode);
+    function extractCalls (matcher, jsCode) {
+        var ast = esprima.parse(jsCode, esprimaOptions);
+        var collector = [];
+        estraverse.traverse(ast, {
+            leave: function (currentNode, parentNode) {
+                var matched = matcher.test(currentNode);
+                if (matched) {
+                    collector.push(currentNode);
+                }
             }
-        }
-    });
-    return collector;
-}
+        });
+        return collector;
+    }
 
-function matchAgainst (that, targetCode) {
-    that.calls = extractCalls(that.matcher, targetCode);
-    that.args = extractArguments(that.matcher, targetCode);
-    that.captured = captureArguments(that.matcher, targetCode);
-}
+    return function (matcher, targetCode) {
+        return {
+            calls: extractCalls(matcher, targetCode),
+            args: extractArguments(matcher, targetCode),
+            captured: captureArguments(matcher, targetCode)
+        };
+    };
+})();
+
 
 
 describe('wildcard identifier assert(actual)', function () {
@@ -59,12 +64,12 @@ describe('wildcard identifier assert(actual)', function () {
         this.matcher = escallmatch('assert(actual)');
     });
     it('single identifier', function () {
-        matchAgainst(this, 'it("test foo", function () { assert(foo); })');
-        assert.equal(this.calls.length, 1);
-        assert.equal(this.args.length, 1);
-        assert(this.captured['actual']);
-        assert.equal(this.captured['actual'].name, 'foo');
-        assert.deepEqual(espurify(this.calls[0]), {
+        var matched = matchCode(this.matcher, 'it("test foo", function () { assert(foo); })');
+        assert.equal(matched.calls.length, 1);
+        assert.equal(matched.args.length, 1);
+        assert(matched.captured['actual']);
+        assert.equal(matched.captured['actual'].name, 'foo');
+        assert.deepEqual(espurify(matched.calls[0]), {
             type: 'CallExpression',
             callee: {
                 type: 'Identifier',
@@ -77,23 +82,23 @@ describe('wildcard identifier assert(actual)', function () {
                 }
             ]
         });
-        assert.deepEqual(espurify(this.args[0]), {
+        assert.deepEqual(espurify(matched.args[0]), {
             type: 'Identifier',
             name: 'foo'
         });
     });
     it('optional parameter', function () {
-        matchAgainst(this, 'it("test foo", function () { assert(foo, "message"); })');
-        assert.equal(this.calls.length, 1);
-        assert.equal(this.args.length, 1);
-        assert(this.captured['actual']);
-        assert.equal(this.captured['actual'].name, 'foo');
+        var matched = matchCode(this.matcher, 'it("test foo", function () { assert(foo, "message"); })');
+        assert.equal(matched.calls.length, 1);
+        assert.equal(matched.args.length, 1);
+        assert(matched.captured['actual']);
+        assert.equal(matched.captured['actual'].name, 'foo');
     });
     it('no params', function () {
-        matchAgainst(this, 'it("test foo", function () { assert(); })');
-        assert.equal(this.calls.length, 0);
-        assert.equal(this.args.length, 0);
-        assert(! this.captured['actual']);
+        var matched = matchCode(this.matcher, 'it("test foo", function () { assert(); })');
+        assert.equal(matched.calls.length, 0);
+        assert.equal(matched.args.length, 0);
+        assert(! matched.captured['actual']);
     });
 });
 
@@ -103,14 +108,14 @@ describe('wildcard two args assert.equal(actual, expected)', function () {
         this.matcher = escallmatch('assert.equal(actual, expected)');
     });
     it('capture arguments', function () {
-        matchAgainst(this, 'it("test foo and bar", function () { assert.equal(foo, bar); })');
-        assert.equal(this.calls.length, 1);
-        assert.equal(this.args.length, 2);
-        assert(this.captured['actual']);
-        assert.equal(this.captured['actual'].name, 'foo');
-        assert(this.captured['expected']);
-        assert.equal(this.captured['expected'].name, 'bar');
-        assert.deepEqual(espurify(this.calls[0]), {
+        var matched = matchCode(this.matcher, 'it("test foo and bar", function () { assert.equal(foo, bar); })');
+        assert.equal(matched.calls.length, 1);
+        assert.equal(matched.args.length, 2);
+        assert(matched.captured['actual']);
+        assert.equal(matched.captured['actual'].name, 'foo');
+        assert(matched.captured['expected']);
+        assert.equal(matched.captured['expected'].name, 'bar');
+        assert.deepEqual(espurify(matched.calls[0]), {
             type: 'CallExpression',
             callee: {
                 type: 'MemberExpression',
@@ -135,30 +140,30 @@ describe('wildcard two args assert.equal(actual, expected)', function () {
                 }
             ]
         });
-        assert.deepEqual(espurify(this.args[0]), {
+        assert.deepEqual(espurify(matched.args[0]), {
             type: 'Identifier',
             name: 'foo'
         });
-        assert.deepEqual(espurify(this.args[1]), {
+        assert.deepEqual(espurify(matched.args[1]), {
             type: 'Identifier',
             name: 'bar'
         });
     });
     it('optional parameters', function () {
-        matchAgainst(this, 'it("test foo and bar", function () { assert.equal(foo, bar, "message"); })');
-        assert.equal(this.calls.length, 1);
-        assert.equal(this.args.length, 2);
-        assert(this.captured['actual']);
-        assert.equal(this.captured['actual'].name, 'foo');
-        assert(this.captured['expected']);
-        assert.equal(this.captured['expected'].name, 'bar');
+        var matched = matchCode(this.matcher, 'it("test foo and bar", function () { assert.equal(foo, bar, "message"); })');
+        assert.equal(matched.calls.length, 1);
+        assert.equal(matched.args.length, 2);
+        assert(matched.captured['actual']);
+        assert.equal(matched.captured['actual'].name, 'foo');
+        assert(matched.captured['expected']);
+        assert.equal(matched.captured['expected'].name, 'bar');
     });
     it('less parameters', function () {
-        matchAgainst(this, 'it("test foo and bar", function () { assert.equal(foo); })');
-        assert.equal(this.calls.length, 0);
-        assert.equal(this.args.length, 0);
-        assert(! this.captured['actual']);
-        assert(! this.captured['expected']);
+        var matched = matchCode(this.matcher, 'it("test foo and bar", function () { assert.equal(foo); })');
+        assert.equal(matched.calls.length, 0);
+        assert.equal(matched.args.length, 0);
+        assert(! matched.captured['actual']);
+        assert(! matched.captured['expected']);
     });
 });
 
@@ -166,11 +171,10 @@ describe('wildcard two args assert.equal(actual, expected)', function () {
 
 it('not Identifier', function () {
     var matcher = escallmatch('assert.equal(actual, expected)');
-    var targetCode = 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })';
+    var matched = matchCode(matcher, 'it("test3", function () { assert.equal(toto.tata(baz), moo[0]); })');
 
-    var calls = extractCalls(matcher, targetCode);
-    assert.equal(calls.length, 1);
-    assert.deepEqual(espurify(calls[0]), {
+    assert.equal(matched.calls.length, 1);
+    assert.deepEqual(espurify(matched.calls[0]), {
         type: 'CallExpression',
         callee: {
             type: 'MemberExpression',
@@ -221,9 +225,8 @@ it('not Identifier', function () {
         ]
     });
 
-    var args = extractArguments(matcher, targetCode);
-    assert.equal(args.length, 2);
-    assert.deepEqual(espurify(args[0]), {
+    assert.equal(matched.args.length, 2);
+    assert.deepEqual(espurify(matched.args[0]), {
         type: 'CallExpression',
         callee: {
             type: 'MemberExpression',
@@ -244,7 +247,7 @@ it('not Identifier', function () {
             }
         ]
     });
-    assert.deepEqual(espurify(args[1]), {
+    assert.deepEqual(espurify(matched.args[1]), {
         type: 'MemberExpression',
         computed: true,
         object: {
