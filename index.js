@@ -15,7 +15,7 @@ function Matcher (exampleAst) {
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = matchCallExpWithoutArgs(this.exampleAst, currentNode);
+    var calleeMatched = matchCallee(this.exampleAst, currentNode);
     if (calleeMatched) {
         return this.exampleAst.arguments.length <= currentNode.arguments.length;
     }
@@ -24,14 +24,14 @@ Matcher.prototype.test = function (currentNode) {
 
 Matcher.prototype.isArgument = function (currentNode, parentNode) {
     var indexOfCurrentArg, exampleIdent;
-    if (matchCallExpWithoutArgs(this.exampleAst, parentNode)) {
+    if (matchCallee(this.exampleAst, parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
         return indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length;
     }
     return false;
 };
 
-function matchCallExpWithoutArgs(callExp1, callExp2, callExp2Child) {
+function matchCallee(callExp1, callExp2, callExp2Child) {
     if (!callExp1 || !callExp2) {
         return false;
     }
