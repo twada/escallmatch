@@ -12,12 +12,16 @@ function createMatcher (pattern) {
 
 function Matcher (exampleAst) {
     this.exampleAst = exampleAst;
+    this.numMaxArgs = this.exampleAst.arguments.length;
+    this.numMinArgs = this.exampleAst.arguments.filter(function (node) { return node.type === syntax.Identifier; }).length;
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = matchCallee(this.exampleAst, currentNode);
+    var calleeMatched = matchCallee(this.exampleAst, currentNode),
+        numArgs;
     if (calleeMatched) {
-        return this.exampleAst.arguments.length === currentNode.arguments.length;
+        numArgs = currentNode.arguments.length;
+        return this.numMinArgs <= numArgs && numArgs <= this.numMaxArgs;
     }
     return false;
 };

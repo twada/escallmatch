@@ -78,6 +78,16 @@ describe('optional parameter assert(actual, [message])', function () {
             value: 'message'
         });
     });
+    it('without message', function () {
+        var matched = matchCode(this.matcher, 'it("test foo", function () { assert(foo); })');
+        assert.equal(matched.calls.length, 1);
+        assert.equal(matched.args.length, 1);
+        assert(matched.captured['actual']);
+        assert.deepEqual(espurify(matched.captured['actual']), {
+            type: 'Identifier',
+            name: 'foo'
+        });
+    });
 });
 
 
