@@ -5,58 +5,31 @@ var assert = require('assert'),
     espurify = require('espurify'),
     escallmatch = require('..');
 
-var matchCode = (function () {
-    function captureArguments (matcher, jsCode) {
-        var ast = esprima.parse(jsCode, esprimaOptions);
-        var collector = {};
-        estraverse.traverse(ast, {
-            leave: function (currentNode, parentNode) {
-                var name = matcher.isCaptured(currentNode, parentNode);
-                if (name) {
-                    collector[name] = currentNode;
-                }
-            }
-        });
-        return collector;
-    }
 
-    function extractArguments (matcher, jsCode) {
-        var ast = esprima.parse(jsCode, esprimaOptions);
-        var collector = [];
-        estraverse.traverse(ast, {
-            leave: function (currentNode, parentNode) {
-                var matched = matcher.isCaptured(currentNode, parentNode);
-                if (matched) {
-                    collector.push(currentNode);
-                }
+function matchCode (matcher, targetCode) {
+    var ast = esprima.parse(targetCode, esprimaOptions);
+    var calls = [];
+    var args = [];
+    var captured = {};
+    estraverse.traverse(ast, {
+        leave: function (currentNode, parentNode) {
+            if (matcher.test(currentNode)) {
+                calls.push(currentNode);
+                return;
             }
-        });
-        return collector;
-    }
-
-    function extractCalls (matcher, jsCode) {
-        var ast = esprima.parse(jsCode, esprimaOptions);
-        var collector = [];
-        estraverse.traverse(ast, {
-            leave: function (currentNode, parentNode) {
-                var matched = matcher.test(currentNode);
-                if (matched) {
-                    collector.push(currentNode);
-                }
+            var matched = matcher.isCaptured(currentNode, parentNode);
+            if (matched) {
+                args.push(currentNode);
+                captured[matched] = currentNode;
             }
-        });
-        return collector;
-    }
-
-    return function (matcher, targetCode) {
-        return {
-            calls: extractCalls(matcher, targetCode),
-            args: extractArguments(matcher, targetCode),
-            captured: captureArguments(matcher, targetCode)
-        };
+        }
+    });
+    return {
+        calls: calls,
+        args: args,
+        captured: captured
     };
-})();
-
+}
 
 
 describe('optional parameter assert(actual, [message])', function () {
