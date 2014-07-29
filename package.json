@@ -27,7 +27,7 @@
     "mocha": "^1.20.1"
   },
   "scripts": {
-    "build": "browserify index.js --standalone escallmatch > ./build/escallmatch.js",
+    "build": "browserify index.js --standalone escallmatch | derequire > ./build/escallmatch.js",
     "jshint": "jshint index.js",
     "test": "./node_modules/.bin/mocha"
   },
