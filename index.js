@@ -23,7 +23,7 @@ function createMatcher (pattern) {
 function Matcher (exampleAst) {
     this.exampleAst = exampleAst;
     this.numMaxArgs = this.exampleAst.arguments.length;
-    this.numMinArgs = this.exampleAst.arguments.filter(function (node) { return node.type === syntax.Identifier; }).length;
+    this.numMinArgs = this.exampleAst.arguments.filter(identifiers).length;
 }
 
 Matcher.prototype.test = function (currentNode) {
@@ -99,6 +99,10 @@ function isCalleeOfParent(currentNode, parentNode) {
 
 function startsWith (str, phrase) {
     return str.lastIndexOf(phrase, 0) === 0;
+}
+
+function identifiers (node) {
+    return node.type === syntax.Identifier;
 }
 
 function extractExpressionFrom (tree) {
