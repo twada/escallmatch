@@ -1,3 +1,14 @@
+/**
+ * escallmatch
+ * 
+ * https://github.com/twada/escallmatch
+ *
+ * Copyright (c) 2014 Takuto Wada
+ * Licensed under the MIT license.
+ *   http://twada.mit-license.org/
+ */
+'use strict';
+
 var esprima = require('esprima'),
     estraverse = require('estraverse'),
     espurify = require('espurify'),
