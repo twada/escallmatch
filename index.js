@@ -8,6 +8,7 @@
  *   http://twada.mit-license.org/
  */
 'use strict';
+/* jshint -W024 */
 
 var esprima = require('esprima'),
     estraverse = require('estraverse'),
