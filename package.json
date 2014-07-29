@@ -39,7 +39,7 @@
   "scripts": {
     "bower": "bower install --config.interactive=false",
     "jshint": "jshint index.js",
-    "test": "./node_modules/.bin/mocha"
+    "test": "gulp test"
   },
   "author": {
     "name": "Takuto Wada",
