@@ -17,7 +17,7 @@ function Matcher (exampleAst) {
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = matchCallee(this.exampleAst, currentNode),
+    var calleeMatched = isCalleeMatched(this.exampleAst, currentNode),
         numArgs;
     if (calleeMatched) {
         numArgs = currentNode.arguments.length;
@@ -27,25 +27,25 @@ Matcher.prototype.test = function (currentNode) {
 };
 
 Matcher.prototype.isCaptured = function (currentNode, parentNode) {
-    var indexOfCurrentArg;
+    var indexOfCurrentArg, argExample;
     if (isCalleeOfParent(currentNode, parentNode)) {
         return null;
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
         if (indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length) {
-            var node = this.exampleAst.arguments[indexOfCurrentArg];
-            if (node.type === syntax.Identifier) {
-                return node.name;
-            } else if (node.type === syntax.ArrayExpression) {
-                return node.elements[0].name;
+            argExample = this.exampleAst.arguments[indexOfCurrentArg];
+            if (argExample.type === syntax.Identifier) {
+                return argExample.name;
+            } else if (argExample.type === syntax.ArrayExpression) {
+                return argExample.elements[0].name;
             }
         }
     }
     return null;
 };
 
-function matchCallee(callExp1, callExp2) {
+function isCalleeMatched(callExp1, callExp2) {
     if (!callExp1 || !callExp2) {
         return false;
     }
@@ -55,13 +55,9 @@ function matchCallee(callExp1, callExp2) {
     if (callExp2.type !== syntax.CallExpression) {
         return false;
     }
-
-    var depth1 = astDepth(callExp1.callee);
-    var depth2 = astDepth(callExp2.callee);
-    if (depth1 !== depth2) {
+    if (astDepth(callExp1.callee) !== astDepth(callExp2.callee)) {
         return false;
     }
-
     return deepEqual(espurify(callExp1.callee), espurify(callExp2.callee));
 }
 
