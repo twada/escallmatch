@@ -37,30 +37,29 @@ Matcher.prototype.test = function (currentNode) {
 };
 
 Matcher.prototype.matchArgument = function (currentNode, parentNode) {
-    var indexOfCurrentArg, argExample;
+    var indexOfCurrentArg;
     if (isCalleeOfParent(currentNode, parentNode)) {
         return null;
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
         if (indexOfCurrentArg < this.exampleAst.arguments.length) {
-            argExample = this.exampleAst.arguments[indexOfCurrentArg];
-            return argMatchResult(argExample);
+            return argMatchResult(this.exampleAst.arguments[indexOfCurrentArg]);
         }
     }
     return null;
 };
 
-function argMatchResult (argExample) {
-    switch(argExample.type) {
+function argMatchResult (argExampleNode) {
+    switch(argExampleNode.type) {
     case syntax.Identifier:
         return {
-            name: argExample.name,
+            name: argExampleNode.name,
             kind: 'mandatory'
         };
     case syntax.ArrayExpression:
         return {
-            name: argExample.elements[0].name,
+            name: argExampleNode.elements[0].name,
             kind: 'optional'
         };
     default:
