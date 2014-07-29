@@ -98,7 +98,7 @@ function isCallExpression (node) {
 
 function isCalleeOfParent(currentNode, parentNode) {
     return parentNode && currentNode &&
-        (parentNode.type === syntax.CallExpression || parentNode.type === syntax.NewExpression) &&
+        parentNode.type === syntax.CallExpression &&
         parentNode.callee === currentNode;
 }
 
