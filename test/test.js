@@ -15,7 +15,6 @@ function matchCode (matcher, targetCode) {
         leave: function (currentNode, parentNode) {
             if (matcher.test(currentNode)) {
                 calls.push(currentNode);
-                return;
             }
             var matched = matcher.matchArgument(currentNode, parentNode);
             if (matched) {
