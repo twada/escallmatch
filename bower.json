@@ -1,0 +1,37 @@
+{
+  "name": "escallmatch",
+  "description": "ECMAScript CallExpression matcher by call example",
+  "main": "build/escallmatch.js",
+  "license": "http://twada.mit-license.org/",
+  "ignore": [
+    "**/.*",
+    "index.js",
+    "package.json",
+    "test"
+  ],
+  "keywords": [
+    "ecmascript",
+    "ast"
+  ],
+  "authors": [
+    {
+      "name": "Takuto Wada",
+      "email": "takuto.wada@gmail.com",
+      "homepage": "https://github.com/twada"
+    }
+  ],
+  "homepage": "https://github.com/twada/escallmatch",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twada/escallmatch.git"
+  },
+  "devDependencies": {
+    "assert": "Jxck/assert",
+    "es5-shim": "~4.0.0",
+    "esprima": "~1.2.2",
+    "espurify": "~0.1.2",
+    "estraverse": "~1.5.1",
+    "mocha": "~1.21.3",
+    "requirejs": "~2.1.14"
+  }
+}

@@ -1,12 +1,23 @@
-var assert = require('assert'),
-    esprima = require('esprima'),
-    esprimaOptions = {tolerant: true, loc: true, tokens: true, raw: true},
-    estraverse = require('estraverse'),
-    espurify = require('espurify'),
-    escallmatch = require('..');
+(function (root, factory) {
+    'use strict';
+    if (typeof define === 'function' && define.amd) {
+        define(['escallmatch', 'esprima', 'estraverse', 'espurify', 'assert'], factory);
+    } else if (typeof exports === 'object') {
+        factory(require('..'), require('esprima'), require('estraverse'), require('espurify'), require('assert'));
+    } else {
+        factory(root.escallmatch, root.esprima, root.estraverse, root.espurify, root.assert);
+    }
+}(this, function (
+    escallmatch,
+    esprima,
+    estraverse,
+    espurify,
+    assert
+) {
 
 
 function matchCode (matcher, targetCode) {
+    var esprimaOptions = {tolerant: true, loc: true, tokens: true, raw: true};
     var ast = esprima.parse(targetCode, esprimaOptions);
     var calls = [];
     var args = [];
@@ -267,3 +278,6 @@ it('not Identifier', function () {
         }
     });
 });
+
+
+}));
