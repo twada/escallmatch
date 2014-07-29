@@ -17,10 +17,10 @@ function matchCode (matcher, targetCode) {
                 calls.push(currentNode);
                 return;
             }
-            var matched = matcher.isCaptured(currentNode, parentNode);
+            var matched = matcher.matchArgument(currentNode, parentNode);
             if (matched) {
-                args.push(currentNode);
-                captured[matched] = currentNode;
+                args.push(matched);
+                captured[matched.name] = currentNode;
             }
         }
     });
@@ -40,6 +40,8 @@ describe('optional parameter assert(actual, [message])', function () {
         var matched = matchCode(this.matcher, 'it("test foo", function () { assert(foo, "message"); })');
         assert.equal(matched.calls.length, 1);
         assert.equal(matched.args.length, 2);
+        assert.deepEqual(matched.args[0], {name: 'actual', kind: 'mandatory'});
+        assert.deepEqual(matched.args[1], {name: 'message', kind: 'optional'});
         assert(matched.captured['actual']);
         assert(matched.captured['message']);
         assert.deepEqual(espurify(matched.captured['actual']), {
@@ -64,8 +66,6 @@ describe('optional parameter assert(actual, [message])', function () {
 });
 
 
-
-
 describe('one argument assert(actual)', function () {
     beforeEach(function () {
         this.matcher = escallmatch('assert(actual)');
@@ -74,8 +74,7 @@ describe('one argument assert(actual)', function () {
         var matched = matchCode(this.matcher, 'it("test foo", function () { assert(foo); })');
         assert.equal(matched.calls.length, 1);
         assert.equal(matched.args.length, 1);
-        assert(matched.captured['actual']);
-        assert.equal(matched.captured['actual'].name, 'foo');
+        assert.deepEqual(matched.args[0], {name: 'actual', kind: 'mandatory'});
         assert.deepEqual(espurify(matched.calls[0]), {
             type: 'CallExpression',
             callee: {
@@ -89,7 +88,7 @@ describe('one argument assert(actual)', function () {
                 }
             ]
         });
-        assert.deepEqual(espurify(matched.args[0]), {
+        assert.deepEqual(espurify(matched.captured['actual']), {
             type: 'Identifier',
             name: 'foo'
         });
@@ -117,6 +116,8 @@ describe('two args assert.equal(actual, expected)', function () {
         var matched = matchCode(this.matcher, 'it("test foo and bar", function () { assert.equal(foo, bar); })');
         assert.equal(matched.calls.length, 1);
         assert.equal(matched.args.length, 2);
+        assert.deepEqual(matched.args[0], {name: 'actual', kind: 'mandatory'});
+        assert.deepEqual(matched.args[1], {name: 'expected', kind: 'mandatory'});
         assert(matched.captured['actual']);
         assert.equal(matched.captured['actual'].name, 'foo');
         assert(matched.captured['expected']);
@@ -146,11 +147,11 @@ describe('two args assert.equal(actual, expected)', function () {
                 }
             ]
         });
-        assert.deepEqual(espurify(matched.args[0]), {
+        assert.deepEqual(espurify(matched.captured['actual']), {
             type: 'Identifier',
             name: 'foo'
         });
-        assert.deepEqual(espurify(matched.args[1]), {
+        assert.deepEqual(espurify(matched.captured['expected']), {
             type: 'Identifier',
             name: 'bar'
         });
@@ -230,7 +231,10 @@ it('not Identifier', function () {
     });
 
     assert.equal(matched.args.length, 2);
-    assert.deepEqual(espurify(matched.args[0]), {
+    assert.deepEqual(matched.args[0], {name: 'actual', kind: 'mandatory'});
+    assert.deepEqual(matched.args[1], {name: 'expected', kind: 'mandatory'});
+
+    assert.deepEqual(espurify(matched.captured['actual']), {
         type: 'CallExpression',
         callee: {
             type: 'MemberExpression',
@@ -251,7 +255,7 @@ it('not Identifier', function () {
             }
         ]
     });
-    assert.deepEqual(espurify(matched.args[1]), {
+    assert.deepEqual(espurify(matched.captured['expected']), {
         type: 'MemberExpression',
         computed: true,
         object: {

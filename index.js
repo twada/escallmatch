@@ -25,7 +25,7 @@ Matcher.prototype.test = function (currentNode) {
     return false;
 };
 
-Matcher.prototype.isCaptured = function (currentNode, parentNode) {
+Matcher.prototype.matchArgument = function (currentNode, parentNode) {
     var indexOfCurrentArg, argExample;
     if (isCalleeOfParent(currentNode, parentNode)) {
         return null;
@@ -35,9 +35,15 @@ Matcher.prototype.isCaptured = function (currentNode, parentNode) {
         if (indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length) {
             argExample = this.exampleAst.arguments[indexOfCurrentArg];
             if (argExample.type === syntax.Identifier) {
-                return argExample.name;
+                return {
+                    name: argExample.name,
+                    kind: 'mandatory'
+                };
             } else if (argExample.type === syntax.ArrayExpression) {
-                return argExample.elements[0].name;
+                return {
+                    name: argExample.elements[0].name,
+                    kind: 'optional'
+                };
             }
         }
     }
