@@ -2,7 +2,6 @@ var esprima = require('esprima'),
     estraverse = require('estraverse'),
     espurify = require('espurify'),
     syntax = estraverse.Syntax,
-    keys = Object.keys || require('object-keys'),
     deepEqual = require('deep-equal');
 
 function createMatcher (pattern) {
