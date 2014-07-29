@@ -104,10 +104,6 @@ function isCalleeOfParent(currentNode, parentNode) {
         parentNode.callee === currentNode;
 }
 
-function startsWith (str, phrase) {
-    return str.lastIndexOf(phrase, 0) === 0;
-}
-
 function identifiers (node) {
     return node.type === syntax.Identifier;
 }
