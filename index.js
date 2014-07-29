@@ -43,23 +43,30 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
-        if (indexOfCurrentArg !== -1 && indexOfCurrentArg < this.exampleAst.arguments.length) {
+        if (indexOfCurrentArg < this.exampleAst.arguments.length) {
             argExample = this.exampleAst.arguments[indexOfCurrentArg];
-            if (argExample.type === syntax.Identifier) {
-                return {
-                    name: argExample.name,
-                    kind: 'mandatory'
-                };
-            } else if (argExample.type === syntax.ArrayExpression) {
-                return {
-                    name: argExample.elements[0].name,
-                    kind: 'optional'
-                };
-            }
+            return argMatchResult(argExample);
         }
     }
     return null;
 };
+
+function argMatchResult (argExample) {
+    switch(argExample.type) {
+    case syntax.Identifier:
+        return {
+            name: argExample.name,
+            kind: 'mandatory'
+        };
+    case syntax.ArrayExpression:
+        return {
+            name: argExample.elements[0].name,
+            kind: 'optional'
+        };
+    default:
+        return null;
+    }
+}
 
 function isCalleeMatched(callExp1, callExp2) {
     if (!callExp1 || !callExp2) {
