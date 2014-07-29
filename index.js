@@ -69,13 +69,7 @@ function argMatchResult (argExample) {
 }
 
 function isCalleeMatched(callExp1, callExp2) {
-    if (!callExp1 || !callExp2) {
-        return false;
-    }
-    if (callExp1.type !== syntax.CallExpression) {
-        return false;
-    }
-    if (callExp2.type !== syntax.CallExpression) {
+    if (!isCallExpression(callExp1) || !isCallExpression(callExp2)) {
         return false;
     }
     if (astDepth(callExp1.callee) !== astDepth(callExp2.callee)) {
@@ -96,6 +90,10 @@ function astDepth (ast) {
         }
     });
     return maxDepth;
+}
+
+function isCallExpression (node) {
+    return node && node.type === syntax.CallExpression;
 }
 
 function isCalleeOfParent(currentNode, parentNode) {
