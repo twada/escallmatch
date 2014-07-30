@@ -48,24 +48,34 @@
                 escallmatch('assert(actual, ');
             }, Error);
         });
-        it('argument name should be unique', function () {
-            assert.throws(function () {
-                escallmatch('assert(actual, actual)');
-            }, /Duplicate argument name: actual/);
-            assert.throws(function () {
-                escallmatch('assert(actual, [actual])');
-            }, /Duplicate argument name: actual/);
+        describe('argument name should be unique', function () {
+            it('unique identifier', function () {
+                assert.throws(function () {
+                    escallmatch('assert(actual, actual)');
+                }, /Duplicate argument name: actual/);
+            });
+            it('unique even if in array', function () {
+                assert.throws(function () {
+                    escallmatch('assert(actual, [actual])');
+                }, /Duplicate argument name: actual/);
+            });
         });
-        it('argument should be in the form of `name` or `[name]`', function () {
-            assert.throws(function () {
-                escallmatch('assert(actual, {foo: "bar"})');
-            }, /Argument should be in the form of `name` or `\[name\]`/);
-            assert.throws(function () {
-                escallmatch('assert(actual, [])');
-            }, /Argument should be in the form of `name` or `\[name\]`/);
-            assert.throws(function () {
-                escallmatch('assert(actual, [foo, bar])');
-            }, /Argument should be in the form of `name` or `\[name\]`/);
+        describe('argument should be in the form of `name` or `[name]`', function () {
+            it('not an Identifier or an ArrayExpression', function () {
+                assert.throws(function () {
+                    escallmatch('assert(actual, {foo: "bar"})');
+                }, /Argument should be in the form of `name` or `\[name\]`/);
+            });
+            it('empty array', function () {
+                assert.throws(function () {
+                    escallmatch('assert(actual, [])');
+                }, /Argument should be in the form of `name` or `\[name\]`/);
+            });
+            it('array having more than one element', function () {
+                assert.throws(function () {
+                    escallmatch('assert(actual, [foo, bar])');
+                }, /Argument should be in the form of `name` or `\[name\]`/);
+            });
         });
     });
 
