@@ -1,7 +1,7 @@
 {
   "name": "escallmatch",
   "version": "0.0.1",
-  "description": "ECMAScript CallExpression matcher by call example",
+  "description": "ECMAScript CallExpression matcher made from simple API definition",
   "keywords": [
     "ecmascript",
     "ast"

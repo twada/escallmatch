@@ -1,5 +1,5 @@
 /**
- * escallmatch
+ * escallmatch - ECMAScript CallExpression matcher made from simple API definition
  * 
  * https://github.com/twada/escallmatch
  *
