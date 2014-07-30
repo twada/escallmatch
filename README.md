@@ -15,23 +15,23 @@ EXAMPLE
 ---------------------------------------
 
 ```javascript
-var fs = require('fs'),
+var escallmatch = require('escallmatch'),
     esprima = require('esprima'),
     estraverse = require('estraverse'),
-    escallmatch = require('escallmatch');
+    fs = require('fs');
 
 var matcher = escallmatch('assert.equal(actual, expected, [message])');
 
 estraverse.traverse(esprima.parse(fs.readFileSync('path/to/some_test.js')), {
     enter: function (currentNode, parentNode) {
         if (matcher.test(currentNode)) {
-            // currentNode is a CallExpression that matches to pattern string
+            // currentNode is a CallExpression that matches to the API definition
         }
         var argMatched = matcher.matchArgument(currentNode, parentNode);
         if (argMatched) {
             if (argMatched.kind === 'mandatory') {
                 // mandatory arg (in this case, `actual` or `expected`)
-            } else if (argMatched.kind === 'optional) {
+            } else if (argMatched.kind === 'optional') {
                 // optional arg (in this case, `message`)
             }
         }
