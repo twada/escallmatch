@@ -61,14 +61,20 @@ Returns `matcher` object having two methods, `test` and `matchArgument`.
 
 ### var isMatched = matcher.test(node)
 
-Returns boolean result whether `node` matches the API definition or not. Returns `false` if not matched.
+Tests whether `node` matches the API definition or not.
+
+ - Returns `true` if matched.
+ - Returns `false` if not matched.
 
 `node` should be an AST node object defined in [Mozilla JavaScript AST spec](https://developer.mozilla.org/en-US/docs/SpiderMonkey/Parser_API).
 
 
 ### var argMatched = matcher.matchArgument(node, parentNode)
 
-Returns match result object representing whether `node` (and its `parentNode`) matches some argument of the API definition or not. Returns `null` if not matched. If matched, returns object like `{name: 'actual', kind: 'mandatory'}`, whose `name` is an argument name in pattern string and `kind` is `'mandatory'` or `'optional'`.
+Returns match result object representing whether `node` (and its `parentNode`) matches some argument of the API definition or not.
+
+ - Returns `null` if not matched.
+ - If matched, returns object like `{name: 'actual', kind: 'mandatory'}`, whose `name` is an argument name in the API definition and `kind` is `'mandatory'` or `'optional'`.
 
 `node` and `parentNode` should be AST node objects defined in [Mozilla JavaScript AST spec](https://developer.mozilla.org/en-US/docs/SpiderMonkey/Parser_API).
 
