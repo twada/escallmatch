@@ -76,6 +76,11 @@
                     escallmatch('assert(actual, [foo, bar])');
                 }, /Argument should be in the form of `name` or `\[name\]`/);
             });
+            it('array element is not an Identifier', function () {
+                assert.throws(function () {
+                    escallmatch('assert(actual, [3])');
+                }, /Argument should be in the form of `name` or `\[name\]`/);
+            });
         });
     });
 

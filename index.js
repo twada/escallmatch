@@ -123,6 +123,7 @@ function validateApiExpression (callExpression) {
 }
 
 function validateArg (arg) {
+    var inner;
     switch(arg.type) {
     case syntax.Identifier:
         return arg.name;
@@ -130,7 +131,11 @@ function validateArg (arg) {
         if (arg.elements.length !== 1) {
             throw new Error(invalidFormMsg);
         }
-        return arg.elements[0].name;
+        inner = arg.elements[0];
+        if (inner.type !== syntax.Identifier) {
+            throw new Error(invalidFormMsg);
+        }
+        return inner.name;
     default:
         throw new Error(invalidFormMsg);
     }
