@@ -56,6 +56,11 @@
                 escallmatch('assert(actual, [actual])');
             }, /Duplicate argument name: actual/);
         });
+        it('argument should be in the form of `name` or `[name]`', function () {
+            assert.throws(function () {
+                escallmatch('assert(actual, {foo: "bar"})');
+            }, /Argument should be in the form of `name` or `\[name\]`/);
+        });
     });
 
 

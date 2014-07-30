@@ -1,5 +1,6 @@
 /**
- * escallmatch - ECMAScript CallExpression matcher made from simple API definition
+ * escallmatch:
+ *   ECMAScript CallExpression matcher made from simple API definition
  * 
  * https://github.com/twada/escallmatch
  *
@@ -111,7 +112,7 @@ function identifiers (node) {
 function validateApiExpression (callExpression) {
     var names = {};
     callExpression.arguments.forEach(function (arg) {
-        var name = nameOfArg(arg);
+        var name = validateArg(arg);
         if (hasOwn.call(names, name)) {
             throw new Error('Duplicate argument name: ' + name);
         } else {
@@ -120,14 +121,14 @@ function validateApiExpression (callExpression) {
     });
 }
 
-function nameOfArg (arg) {
+function validateArg (arg) {
     switch(arg.type) {
     case syntax.Identifier:
         return arg.name;
     case syntax.ArrayExpression:
         return arg.elements[0].name;
     default:
-        return null;
+        throw new Error('Argument should be in the form of `name` or `[name]`');
     }
 }
 
