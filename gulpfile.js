@@ -1,5 +1,7 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
+    jshint = require('gulp-jshint'),
+    stylish = require('jshint-stylish'),
     mocha = require('gulp-mocha'),
     mochaPhantomJS = require('gulp-mocha-phantomjs'),
     webserver = require('gulp-webserver'),
@@ -8,6 +10,9 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     derequire = require('gulp-derequire'),
     config = {
+        jshint: {
+            src: './index.js'
+        },
         bundle: {
             standalone: 'escallmatch',
             srcFile: './index.js',
@@ -52,6 +57,12 @@ gulp.task('bundle', ['clean_bundle'], function() {
         .pipe(gulp.dest(config.bundle.destDir));
 });
 
+gulp.task('lint', function() {
+    return gulp.src(config.jshint.src)
+        .pipe(jshint())
+        .pipe(jshint.reporter(stylish));
+});
+
 gulp.task('unit', function () {
     return runMochaSimply();
 });
@@ -70,4 +81,4 @@ gulp.task('test_browser', ['bundle'], function () {
 
 gulp.task('clean', ['clean_bundle']);
 
-gulp.task('test', ['unit','test_browser','test_amd']);
+gulp.task('test', ['lint', 'unit','test_browser','test_amd']);

@@ -28,16 +28,18 @@
     "del": "~0.1.1",
     "gulp": "~3.8.6",
     "gulp-derequire": "~0.3.0",
+    "gulp-jshint": "~1.8.2",
     "gulp-mocha": "~0.5.2",
     "gulp-mocha-phantomjs": "~0.3.0",
     "gulp-util": "~3.0.0",
     "gulp-webserver": "~0.4.0",
+    "jshint-stylish": "~0.4.0",
     "mocha": "~1.21.3",
     "vinyl-source-stream": "~0.1.1"
   },
   "scripts": {
     "bower": "bower install --config.interactive=false",
-    "jshint": "jshint index.js",
+    "jshint": "gulp lint",
     "test": "gulp test"
   },
   "author": {
