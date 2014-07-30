@@ -60,6 +60,12 @@
             assert.throws(function () {
                 escallmatch('assert(actual, {foo: "bar"})');
             }, /Argument should be in the form of `name` or `\[name\]`/);
+            assert.throws(function () {
+                escallmatch('assert(actual, [])');
+            }, /Argument should be in the form of `name` or `\[name\]`/);
+            assert.throws(function () {
+                escallmatch('assert(actual, [foo, bar])');
+            }, /Argument should be in the form of `name` or `\[name\]`/);
         });
     });
 

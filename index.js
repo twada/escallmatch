@@ -16,7 +16,8 @@ var esprima = require('esprima'),
     espurify = require('espurify'),
     syntax = estraverse.Syntax,
     hasOwn = Object.prototype.hasOwnProperty,
-    deepEqual = require('deep-equal');
+    deepEqual = require('deep-equal'),
+    invalidFormMsg = 'Argument should be in the form of `name` or `[name]`';
 
 function createMatcher (pattern) {
     var ast = extractExpressionFrom(esprima.parse(pattern));
@@ -126,9 +127,12 @@ function validateArg (arg) {
     case syntax.Identifier:
         return arg.name;
     case syntax.ArrayExpression:
+        if (arg.elements.length !== 1) {
+            throw new Error(invalidFormMsg);
+        }
         return arg.elements[0].name;
     default:
-        throw new Error('Argument should be in the form of `name` or `[name]`');
+        throw new Error(invalidFormMsg);
     }
 }
 
