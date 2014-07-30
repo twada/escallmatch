@@ -52,6 +52,9 @@
             assert.throws(function () {
                 escallmatch('assert(actual, actual)');
             }, /Duplicate argument name: actual/);
+            assert.throws(function () {
+                escallmatch('assert(actual, [actual])');
+            }, /Duplicate argument name: actual/);
         });
     });
 
