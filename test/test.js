@@ -42,6 +42,15 @@
     }
 
 
+    describe('API definition validation', function () {
+        it('syntax error', function () {
+            assert.throws(function () {
+                escallmatch('assert(actual, ');
+            }, Error);
+        });
+    });
+
+
     describe('optional parameter assert(actual, [message])', function () {
         beforeEach(function () {
             this.matcher = escallmatch('assert(actual, [message])');
