@@ -27,13 +27,12 @@
     "browserify": "~5.9.1",
     "del": "~0.1.1",
     "gulp": "~3.8.6",
-    "gulp-connect": "~2.0.6",
     "gulp-derequire": "~0.3.0",
     "gulp-mocha": "~0.5.2",
     "gulp-mocha-phantomjs": "~0.3.0",
     "gulp-util": "~3.0.0",
+    "gulp-webserver": "~0.4.0",
     "mocha": "~1.21.3",
-    "through2": "~1.0.0",
     "vinyl-source-stream": "~0.1.1"
   },
   "scripts": {
