@@ -17,7 +17,8 @@ var esprima = require('esprima'),
     syntax = estraverse.Syntax,
     hasOwn = Object.prototype.hasOwnProperty,
     deepEqual = require('deep-equal'),
-    invalidFormMsg = 'Argument should be in the form of `name` or `[name]`';
+    duplicatedArgMessage = 'Duplicate argument name: ',
+    invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
 function createMatcher (pattern) {
     var ast = extractExpressionFrom(esprima.parse(pattern));
@@ -115,7 +116,7 @@ function validateApiExpression (callExpression) {
     callExpression.arguments.forEach(function (arg) {
         var name = validateArg(arg);
         if (hasOwn.call(names, name)) {
-            throw new Error('Duplicate argument name: ' + name);
+            throw new Error(duplicatedArgMessage + name);
         } else {
             names[name] = name;
         }
@@ -129,15 +130,15 @@ function validateArg (arg) {
         return arg.name;
     case syntax.ArrayExpression:
         if (arg.elements.length !== 1) {
-            throw new Error(invalidFormMsg);
+            throw new Error(invalidFormMessage);
         }
         inner = arg.elements[0];
         if (inner.type !== syntax.Identifier) {
-            throw new Error(invalidFormMsg);
+            throw new Error(invalidFormMessage);
         }
         return inner.name;
     default:
-        throw new Error(invalidFormMsg);
+        throw new Error(invalidFormMessage);
     }
 }
 
