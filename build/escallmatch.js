@@ -1,6 +1,7 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.escallmatch=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
- * escallmatch - ECMAScript CallExpression matcher made from simple API definition
+ * escallmatch:
+ *   ECMAScript CallExpression matcher made from simple API definition
  * 
  * https://github.com/twada/escallmatch
  *
@@ -15,10 +16,14 @@ var esprima = _dereq_('esprima'),
     estraverse = _dereq_('estraverse'),
     espurify = _dereq_('espurify'),
     syntax = estraverse.Syntax,
-    deepEqual = _dereq_('deep-equal');
+    hasOwn = Object.prototype.hasOwnProperty,
+    deepEqual = _dereq_('deep-equal'),
+    duplicatedArgMessage = 'Duplicate argument name: ',
+    invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
 function createMatcher (pattern) {
     var ast = extractExpressionFrom(esprima.parse(pattern));
+    validateApiExpression(ast);
     return new Matcher(ast);
 }
 
@@ -105,6 +110,37 @@ function isCalleeOfParent(currentNode, parentNode) {
 
 function identifiers (node) {
     return node.type === syntax.Identifier;
+}
+
+function validateApiExpression (callExpression) {
+    var names = {};
+    callExpression.arguments.forEach(function (arg) {
+        var name = validateArg(arg);
+        if (hasOwn.call(names, name)) {
+            throw new Error(duplicatedArgMessage + name);
+        } else {
+            names[name] = name;
+        }
+    });
+}
+
+function validateArg (arg) {
+    var inner;
+    switch(arg.type) {
+    case syntax.Identifier:
+        return arg.name;
+    case syntax.ArrayExpression:
+        if (arg.elements.length !== 1) {
+            throw new Error(invalidFormMessage);
+        }
+        inner = arg.elements[0];
+        if (inner.type !== syntax.Identifier) {
+            throw new Error(invalidFormMessage);
+        }
+        return inner.name;
+    default:
+        throw new Error(invalidFormMessage);
+    }
 }
 
 function extractExpressionFrom (tree) {
