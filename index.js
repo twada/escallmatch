@@ -49,9 +49,7 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
-        if (indexOfCurrentArg < this.exampleAst.arguments.length) {
-            return argMatchResult(this.exampleAst.arguments[indexOfCurrentArg]);
-        }
+        return argMatchResult(this.exampleAst.arguments[indexOfCurrentArg]);
     }
     return null;
 };
