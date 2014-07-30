@@ -48,6 +48,11 @@
                 escallmatch('assert(actual, ');
             }, Error);
         });
+        it('argument name should be unique', function () {
+            assert.throws(function () {
+                escallmatch('assert(actual, actual)');
+            }, /Duplicate argument name: actual/);
+        });
     });
 
 

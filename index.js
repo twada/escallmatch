@@ -14,10 +14,12 @@ var esprima = require('esprima'),
     estraverse = require('estraverse'),
     espurify = require('espurify'),
     syntax = estraverse.Syntax,
+    hasOwn = Object.prototype.hasOwnProperty,
     deepEqual = require('deep-equal');
 
 function createMatcher (pattern) {
     var ast = extractExpressionFrom(esprima.parse(pattern));
+    validateApiExpression(ast);
     return new Matcher(ast);
 }
 
@@ -104,6 +106,29 @@ function isCalleeOfParent(currentNode, parentNode) {
 
 function identifiers (node) {
     return node.type === syntax.Identifier;
+}
+
+function validateApiExpression (callExpression) {
+    var names = {};
+    callExpression.arguments.forEach(function (arg) {
+        var name = nameOfArg(arg);
+        if (hasOwn.call(names, name)) {
+            throw new Error('Duplicate argument name: ' + name);
+        } else {
+            names[name] = name;
+        }
+    });
+}
+
+function nameOfArg (arg) {
+    switch(arg.type) {
+    case syntax.Identifier:
+        return arg.name;
+    case syntax.ArrayExpression:
+        return arg.elements[0].name;
+    default:
+        return null;
+    }
 }
 
 function extractExpressionFrom (tree) {
