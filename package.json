@@ -8,6 +8,7 @@
   ],
   "main": "./index.js",
   "files": [
+    "CHANGELOG.md",
     "README.md",
     "gulpfile.js",
     "index.js",
