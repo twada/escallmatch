@@ -23,7 +23,6 @@ var esprima = require('esprima'),
 
 function createMatcher (pattern) {
     var ast = extractExpressionFrom(esprima.parse(pattern));
-    validateApiExpression(ast);
     return new Matcher(ast);
 }
 
@@ -145,8 +144,13 @@ function validateArg (arg) {
 }
 
 function extractExpressionFrom (tree) {
-    var expressionStatement = tree.body[0],
-        expression = expressionStatement.expression;
+    var statement, expression;
+    statement = tree.body[0];
+    if (statement.type !== syntax.ExpressionStatement) {
+        throw new Error(notCallExprMessage);
+    }
+    expression = statement.expression;
+    validateApiExpression(expression);
     return expression;
 }
 
