@@ -48,6 +48,11 @@
                 escallmatch('assert(actual, ');
             }, Error);
         });
+        it('not a CallExpression', function () {
+            assert.throws(function () {
+                escallmatch('bar[baz]');
+            }, /Argument should be in the form of CallExpression/);
+        });
         describe('argument name should be unique', function () {
             it('unique identifier', function () {
                 assert.throws(function () {

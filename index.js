@@ -17,6 +17,7 @@ var esprima = require('esprima'),
     syntax = estraverse.Syntax,
     hasOwn = Object.prototype.hasOwnProperty,
     deepEqual = require('deep-equal'),
+    notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
     invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
@@ -110,6 +111,9 @@ function identifiers (node) {
 }
 
 function validateApiExpression (callExpression) {
+    if (callExpression.type !== syntax.CallExpression) {
+        throw new Error(notCallExprMessage);
+    }
     var names = {};
     callExpression.arguments.forEach(function (arg) {
         var name = validateArg(arg);
