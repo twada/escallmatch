@@ -14,7 +14,9 @@ ECMAScript CallExpression matcher made from simple API definition
 EXAMPLE
 ---------------------------------------
 
-Creating CallExpression matcher for API definition `'assert.equal(actual, expected, [message])'`. Then match against `path/to/some_test.js`.
+Creating CallExpression matcher for API definition `'assert.equal(actual, expected, [message])'`.
+
+Then match against `path/to/some_test.js`.
 
 ```javascript
 var escallmatch = require('escallmatch'),
@@ -46,6 +48,7 @@ where content of `path/to/some_test.js` is:
 ```javascript
 var assert = require('assert'),
     anotherAssert = assert,
+    equal = assert.equal.bind(assert),
     foo = '2',
     bar = 2;
 
