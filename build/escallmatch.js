@@ -18,12 +18,12 @@ var esprima = _dereq_('esprima'),
     syntax = estraverse.Syntax,
     hasOwn = Object.prototype.hasOwnProperty,
     deepEqual = _dereq_('deep-equal'),
+    notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
     invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
 function createMatcher (pattern) {
     var ast = extractExpressionFrom(esprima.parse(pattern));
-    validateApiExpression(ast);
     return new Matcher(ast);
 }
 
@@ -50,9 +50,7 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
-        if (indexOfCurrentArg < this.exampleAst.arguments.length) {
-            return argMatchResult(this.exampleAst.arguments[indexOfCurrentArg]);
-        }
+        return argMatchResult(this.exampleAst.arguments[indexOfCurrentArg]);
     }
     return null;
 };
@@ -113,6 +111,9 @@ function identifiers (node) {
 }
 
 function validateApiExpression (callExpression) {
+    if (callExpression.type !== syntax.CallExpression) {
+        throw new Error(notCallExprMessage);
+    }
     var names = {};
     callExpression.arguments.forEach(function (arg) {
         var name = validateArg(arg);
@@ -144,8 +145,13 @@ function validateArg (arg) {
 }
 
 function extractExpressionFrom (tree) {
-    var expressionStatement = tree.body[0],
-        expression = expressionStatement.expression;
+    var statement, expression;
+    statement = tree.body[0];
+    if (statement.type !== syntax.ExpressionStatement) {
+        throw new Error(notCallExprMessage);
+    }
+    expression = statement.expression;
+    validateApiExpression(expression);
     return expression;
 }
 
