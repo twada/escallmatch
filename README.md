@@ -14,6 +14,8 @@ ECMAScript CallExpression matcher made from simple API definition
 EXAMPLE
 ---------------------------------------
 
+Creating CallExpression matcher for API definition `'assert.equal(actual, expected, [message])'`. Then match against `path/to/some_test.js`.
+
 ```javascript
 var escallmatch = require('escallmatch'),
     esprima = require('esprima'),
@@ -37,6 +39,27 @@ estraverse.traverse(esprima.parse(fs.readFileSync('path/to/some_test.js')), {
         }
     }
 });
+```
+
+where content of `path/to/some_test.js` is:
+
+```javascript
+var assert = require('assert'),
+    anotherAssert = assert,
+    foo = '2',
+    bar = 2;
+
+assert.equal(foo, bar);  // matches
+assert.equal(bar, foo);  // matches
+assert.equal(foo, bar, 'foo shoule be equal to bar');  // matches (with optional arg)
+
+assert.equal();  // does not match (less args)
+assert.equal(foo);  // does not match (less args)
+assert.equal(foo, bar, 'hoge', 'fuga');  // does not match (too much args)
+
+assert.notEqual(foo, bar);  // does not match (callee method name differs)
+anotherAssert.equal(foo, bar);  // does not match (callee object name differs)
+equal(foo, bar);  // does not match (callee does not match)
 ```
 
 Please note that `escallmatch` is an alpha version product. Pull-requests, issue reports and patches are always welcomed. `escallmatch` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
