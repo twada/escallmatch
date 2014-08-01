@@ -42,7 +42,7 @@
     }
 
 
-    describe('API definition validation', function () {
+    describe('function/method signature validation', function () {
         it('syntax error', function () {
             assert.throws(function () {
                 escallmatch('assert(actual, ');

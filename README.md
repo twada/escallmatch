@@ -1,7 +1,7 @@
 escallmatch
 ================================
 
-ECMAScript CallExpression matcher made from simple API definition
+ECMAScript CallExpression matcher made from function/method signature
 
 [![Build Status](https://travis-ci.org/twada/escallmatch.svg?branch=master)](https://travis-ci.org/twada/escallmatch)
 [![NPM version](https://badge.fury.io/js/escallmatch.svg)](http://badge.fury.io/js/escallmatch)
@@ -14,7 +14,7 @@ ECMAScript CallExpression matcher made from simple API definition
 EXAMPLE
 ---------------------------------------
 
-Creating CallExpression matcher for API definition `'assert.equal(actual, expected, [message])'`.
+Creating CallExpression matcher for method signature `'assert.equal(actual, expected, [message])'`.
 
 Then match against `path/to/some_test.js`.
 
@@ -29,7 +29,7 @@ var matcher = escallmatch('assert.equal(actual, expected, [message])');
 estraverse.traverse(esprima.parse(fs.readFileSync('path/to/some_test.js')), {
     enter: function (currentNode, parentNode) {
         if (matcher.test(currentNode)) {
-            // currentNode is a CallExpression that matches to the API definition
+            // currentNode is a CallExpression that matches to the signature
         }
         var argMatched = matcher.matchArgument(currentNode, parentNode);
         if (argMatched) {
@@ -72,9 +72,9 @@ Please note that `escallmatch` is an alpha version product. Pull-requests, issue
 API
 ---------------------------------------
 
-### var matcher = escallmatch(definitionStr)
+### var matcher = escallmatch(signatureStr)
 
-Create matcher object for a given function/method API definition string.
+Create matcher object for a given function/method signature string.
 
 ```javascript
 var matcher = escallmatch('assert.equal(actual, expected, [message])');
@@ -87,7 +87,7 @@ Returns `matcher` object having two methods, `test` and `matchArgument`.
 
 ### var isMatched = matcher.test(node)
 
-Tests whether `node` matches the API definition or not.
+Tests whether `node` matches the signature or not.
 
  - Returns `true` if matched.
  - Returns `false` if not matched.
@@ -97,10 +97,10 @@ Tests whether `node` matches the API definition or not.
 
 ### var argMatched = matcher.matchArgument(node, parentNode)
 
-Returns match result object representing whether `node` (and its `parentNode`) matches some argument of the API definition or not.
+Returns match result object representing whether `node` (and its `parentNode`) matches some argument of the signature or not.
 
  - Returns `null` if not matched.
- - If matched, returns object like `{name: 'actual', kind: 'mandatory'}`, whose `name` is an argument name in the API definition and `kind` is `'mandatory'` or `'optional'`.
+ - If matched, returns object like `{name: 'actual', kind: 'mandatory'}`, whose `name` is an argument name in the signature and `kind` is `'mandatory'` or `'optional'`.
 
 `node` and `parentNode` should be AST node objects defined in [Mozilla JavaScript AST spec](https://developer.mozilla.org/en-US/docs/SpiderMonkey/Parser_API).
 

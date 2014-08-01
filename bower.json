@@ -1,6 +1,6 @@
 {
   "name": "escallmatch",
-  "description": "ECMAScript CallExpression matcher made from simple API definition",
+  "description": "ECMAScript CallExpression matcher made from function/method signature",
   "main": "build/escallmatch.js",
   "license": "http://twada.mit-license.org/",
   "ignore": [

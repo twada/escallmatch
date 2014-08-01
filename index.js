@@ -1,6 +1,6 @@
 /**
  * escallmatch:
- *   ECMAScript CallExpression matcher made from simple API definition
+ *   ECMAScript CallExpression matcher made from function/method signature
  * 
  * https://github.com/twada/escallmatch
  *
@@ -21,8 +21,8 @@ var esprima = require('esprima'),
     duplicatedArgMessage = 'Duplicate argument name: ',
     invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
-function createMatcher (pattern) {
-    var ast = extractExpressionFrom(esprima.parse(pattern));
+function createMatcher (signatureStr) {
+    var ast = extractExpressionFrom(esprima.parse(signatureStr));
     return new Matcher(ast);
 }
 
