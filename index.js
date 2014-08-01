@@ -26,14 +26,14 @@ function createMatcher (signatureStr) {
     return new Matcher(ast);
 }
 
-function Matcher (exampleAst) {
-    this.exampleAst = exampleAst;
-    this.numMaxArgs = this.exampleAst.arguments.length;
-    this.numMinArgs = this.exampleAst.arguments.filter(identifiers).length;
+function Matcher (signatureAst) {
+    this.signatureAst = signatureAst;
+    this.numMaxArgs = this.signatureAst.arguments.length;
+    this.numMinArgs = this.signatureAst.arguments.filter(identifiers).length;
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = isCalleeMatched(this.exampleAst, currentNode),
+    var calleeMatched = isCalleeMatched(this.signatureAst, currentNode),
         numArgs;
     if (calleeMatched) {
         numArgs = currentNode.arguments.length;
@@ -49,21 +49,21 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
-        return argMatchResult(this.exampleAst.arguments[indexOfCurrentArg]);
+        return argMatchResult(this.signatureAst.arguments[indexOfCurrentArg]);
     }
     return null;
 };
 
-function argMatchResult (argExampleNode) {
-    switch(argExampleNode.type) {
+function argMatchResult (argSignatureNode) {
+    switch(argSignatureNode.type) {
     case syntax.Identifier:
         return {
-            name: argExampleNode.name,
+            name: argSignatureNode.name,
             kind: 'mandatory'
         };
     case syntax.ArrayExpression:
         return {
-            name: argExampleNode.elements[0].name,
+            name: argSignatureNode.elements[0].name,
             kind: 'optional'
         };
     default:
