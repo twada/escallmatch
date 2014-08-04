@@ -110,6 +110,11 @@ Returns match result object representing whether `node` (and its `parentNode`) m
 Returns clone of callee AST object based on signiture passed to `escallmatch` function. Returned tree is one of AST node objects defined in [Mozilla JavaScript AST spec](https://developer.mozilla.org/en-US/docs/SpiderMonkey/Parser_API) (in most cases, `Identifier` or `MemberExpression`).
 
 
+### var argSigs = matcher.argumentSignitures()
+
+Returns array of argument signiture objects based on signiture passed to `escallmatch` function. Returns array of objects like `[{name: 'actual', kind: 'mandatory'}]`, whose `name` is an argument name in the signature and `kind` is `'mandatory'` or `'optional'`.
+
+
 
 INSTALL
 ---------------------------------------

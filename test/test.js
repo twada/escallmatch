@@ -134,6 +134,12 @@
                 name: 'assert'
             });
         });
+        it('#argumentSignitures', function () {
+            assert.deepEqual(this.matcher.argumentSignitures(), [
+                {name: 'actual', kind: 'mandatory'},
+                {name: 'message', kind: 'optional'}
+            ]);
+        });
     });
 
 
@@ -181,6 +187,11 @@
                 type: 'Identifier',
                 name: 'assert'
             });
+        });
+        it('#argumentSignitures', function () {
+            assert.deepEqual(this.matcher.argumentSignitures(), [
+                {name: 'actual', kind: 'mandatory'}
+            ]);
         });
     });
 
@@ -260,6 +271,12 @@
                     name: 'equal'
                 }
             });
+        });
+        it('#argumentSignitures', function () {
+            assert.deepEqual(this.matcher.argumentSignitures(), [
+                {name: 'actual', kind: 'mandatory'},
+                {name: 'expected', kind: 'mandatory'}
+            ]);
         });
     });
 
