@@ -44,18 +44,27 @@ Matcher.prototype.test = function (currentNode) {
 };
 
 Matcher.prototype.matchArgument = function (currentNode, parentNode) {
-    var indexOfCurrentArg;
+    var indexOfCurrentArg, argNode;
     if (isCalleeOfParent(currentNode, parentNode)) {
         return null;
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
-        return argMatchResult(this.signatureAst.arguments[indexOfCurrentArg]);
+        argNode = this.signatureAst.arguments[indexOfCurrentArg];
+        return toArgumentSigniture(argNode);
     }
     return null;
 };
 
-function argMatchResult (argSignatureNode) {
+Matcher.prototype.calleeAst = function () {
+    return espurify(this.signatureAst.callee);
+};
+
+Matcher.prototype.argumentSignitures = function () {
+    return this.signatureAst.arguments.map(toArgumentSigniture);
+};
+
+function toArgumentSigniture (argSignatureNode) {
     switch(argSignatureNode.type) {
     case syntax.Identifier:
         return {
@@ -4046,7 +4055,7 @@ parseStatement: true, parseSourceElement: true */
 
 },{}],6:[function(_dereq_,module,exports){
 /**
- * espurify - Eliminate extra properties from AST output
+ * espurify - Clone new AST without extra properties
  * 
  * https://github.com/twada/espurify
  *
