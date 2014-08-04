@@ -82,7 +82,7 @@ var matcher = escallmatch('assert.equal(actual, expected, [message])');
 
 Any arguments enclosed in bracket (for example, `[message]`) means optional parameters. Without bracket means mandatory parameters.
 
-Returns `matcher` object having two methods, `test` and `matchArgument`.
+Returns `matcher` object having four methods, `test`, `matchArgument`, `calleeAst`, and `argumentSignitures`.
 
 
 ### var isMatched = matcher.test(node)
