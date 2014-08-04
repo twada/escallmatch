@@ -105,6 +105,11 @@ Returns match result object representing whether `node` (and its `parentNode`) m
 `node` and `parentNode` should be AST node objects defined in [Mozilla JavaScript AST spec](https://developer.mozilla.org/en-US/docs/SpiderMonkey/Parser_API).
 
 
+### var calleeAst = matcher.calleeAst()
+
+Returns clone of callee AST object based on signiture passed to `escallmatch` function. Returned tree is one of AST node objects defined in [Mozilla JavaScript AST spec](https://developer.mozilla.org/en-US/docs/SpiderMonkey/Parser_API) (in most cases, `Identifier` or `MemberExpression`).
+
+
 
 INSTALL
 ---------------------------------------

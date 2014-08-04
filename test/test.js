@@ -128,6 +128,12 @@
                 name: 'foo'
             });
         });
+        it('#calleeAst', function () {
+            assert.deepEqual(this.matcher.calleeAst(), {
+                type: 'Identifier',
+                name: 'assert'
+            });
+        });
     });
 
 
@@ -169,6 +175,12 @@
             assert.equal(matched.calls.length, 0);
             assert.equal(matched.args.length, 0);
             assert(! matched.captured['actual']);
+        });
+        it('#calleeAst', function () {
+            assert.deepEqual(this.matcher.calleeAst(), {
+                type: 'Identifier',
+                name: 'assert'
+            });
         });
     });
 
@@ -234,6 +246,20 @@
             assert.equal(matched.args.length, 0);
             assert(! matched.captured['actual']);
             assert(! matched.captured['expected']);
+        });
+        it('#calleeAst', function () {
+            assert.deepEqual(this.matcher.calleeAst(), {
+                type: 'MemberExpression',
+                computed: false,
+                object: {
+                    type: 'Identifier',
+                    name: 'assert'
+                },
+                property: {
+                    type: 'Identifier',
+                    name: 'equal'
+                }
+            });
         });
     });
 

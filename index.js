@@ -54,6 +54,10 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
     return null;
 };
 
+Matcher.prototype.calleeAst = function () {
+    return espurify(this.signatureAst.callee);
+};
+
 function argMatchResult (argSignatureNode) {
     switch(argSignatureNode.type) {
     case syntax.Identifier:
