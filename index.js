@@ -43,13 +43,14 @@ Matcher.prototype.test = function (currentNode) {
 };
 
 Matcher.prototype.matchArgument = function (currentNode, parentNode) {
-    var indexOfCurrentArg;
+    var indexOfCurrentArg, argNode;
     if (isCalleeOfParent(currentNode, parentNode)) {
         return null;
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
-        return toArgumentSigniture(this.signatureAst.arguments[indexOfCurrentArg]);
+        argNode = this.signatureAst.arguments[indexOfCurrentArg];
+        return toArgumentSigniture(argNode);
     }
     return null;
 };
