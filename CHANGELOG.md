@@ -1,3 +1,16 @@
+### 0.2.0 (2014-08-04)
+
+
+#### Features
+
+* **escallmatch:**
+  * argumentSignitures method that returns argument specs in signiture ([2c2478a6](https://github.com/twada/escallmatch/commit/2c2478a6262743ce71f52cf01c82302e1f789d4e))
+  * calleeAst method that returns clone of callee in signiture ([0df6baed](https://github.com/twada/escallmatch/commit/0df6baed4510aaf22df3084559722e4cce36e13a))
+
+
+### 0.1.1 (2014-08-01)
+
+
 ### 0.1.0 (2014-07-31)
 
 
