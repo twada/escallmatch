@@ -67,6 +67,11 @@ gulp.task('unit', function () {
     return runMochaSimply();
 });
 
+gulp.task('watch', function () {
+    gulp.watch(['index.js', 'test/**/*.js'], runMochaSimply);
+    runMochaSimply();
+});
+
 gulp.task('test_amd', ['bundle'], function () {
     return gulp
         .src(config.test.amd)
