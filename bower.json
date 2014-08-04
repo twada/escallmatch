@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "assert": "Jxck/assert",
-    "es5-shim": "~4.0.0",
+    "es5-shim": "~4.0.1",
     "esprima": "~1.2.2",
     "espurify": "~0.1.2",
     "estraverse": "~1.5.1",
