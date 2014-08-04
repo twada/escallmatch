@@ -49,7 +49,7 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
     }
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
-        return argMatchResult(this.signatureAst.arguments[indexOfCurrentArg]);
+        return toArgumentSigniture(this.signatureAst.arguments[indexOfCurrentArg]);
     }
     return null;
 };
@@ -59,10 +59,10 @@ Matcher.prototype.calleeAst = function () {
 };
 
 Matcher.prototype.argumentSignitures = function () {
-    return this.signatureAst.arguments.map(argMatchResult);
+    return this.signatureAst.arguments.map(toArgumentSigniture);
 };
 
-function argMatchResult (argSignatureNode) {
+function toArgumentSigniture (argSignatureNode) {
     switch(argSignatureNode.type) {
     case syntax.Identifier:
         return {
