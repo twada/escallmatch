@@ -1,3 +1,31 @@
+## 0.3.0 (2014-08-08)
+
+
+#### Bug Fixes
+
+* **escallmatch:** fix silly misspelling ([f5cedac8](https://github.com/twada/escallmatch/commit/f5cedac849717f714f7e1162c28068f518b46532))
+
+
+#### Features
+
+* **escallmatch:** make callee comparison faster ([aaf16312](https://github.com/twada/escallmatch/commit/aaf16312f45813b2ff8b089f5a1e926098dccfbe))
+
+
+#### Breaking Changes
+
+* `argumentSignitures` method is renamed to `argumentSignatures`
+
+To migrate, change your code from the following:
+
+`matcher.argumentSignitures()`
+
+To:
+
+`matcher.argumentSignatures()`
+
+ ([f5cedac8](https://github.com/twada/escallmatch/commit/f5cedac849717f714f7e1162c28068f518b46532))
+
+
 ### 0.2.0 (2014-08-04)
 
 
