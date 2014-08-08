@@ -281,6 +281,19 @@
     });
 
 
+    describe('comparing CallExpression depth', function () {
+        it('deeper callee tree', function () {
+            var matcher = escallmatch('assert.equal(actual, expected)');
+            var matched = matchCode(matcher, 'it("zombie like test", function () { browser.assert.equal(foo, bar); })');
+            assert.equal(matched.calls.length, 0);
+        });
+        it('shallower callee tree', function () {
+            var matcher = escallmatch('assert.equal(actual, expected)');
+            var matched = matchCode(matcher, 'it("simple assert", function () { assert(foo); })');
+            assert.equal(matched.calls.length, 0);
+        });
+    });
+
 
     it('not Identifier', function () {
         var matcher = escallmatch('assert.equal(actual, expected)');
