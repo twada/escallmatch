@@ -1,6 +1,6 @@
 {
   "name": "escallmatch",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "ECMAScript CallExpression matcher made from function/method signature",
   "keywords": [
     "ecmascript",
