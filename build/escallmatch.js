@@ -51,7 +51,7 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
     if (this.test(parentNode)) {
         indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
         argNode = this.signatureAst.arguments[indexOfCurrentArg];
-        return toArgumentSigniture(argNode);
+        return toArgumentSignature(argNode);
     }
     return null;
 };
@@ -60,11 +60,11 @@ Matcher.prototype.calleeAst = function () {
     return espurify(this.signatureAst.callee);
 };
 
-Matcher.prototype.argumentSignitures = function () {
-    return this.signatureAst.arguments.map(toArgumentSigniture);
+Matcher.prototype.argumentSignatures = function () {
+    return this.signatureAst.arguments.map(toArgumentSignature);
 };
 
-function toArgumentSigniture (argSignatureNode) {
+function toArgumentSignature (argSignatureNode) {
     switch(argSignatureNode.type) {
     case syntax.Identifier:
         return {

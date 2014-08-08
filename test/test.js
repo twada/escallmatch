@@ -134,8 +134,8 @@
                 name: 'assert'
             });
         });
-        it('#argumentSignitures', function () {
-            assert.deepEqual(this.matcher.argumentSignitures(), [
+        it('#argumentSignatures', function () {
+            assert.deepEqual(this.matcher.argumentSignatures(), [
                 {name: 'actual', kind: 'mandatory'},
                 {name: 'message', kind: 'optional'}
             ]);
@@ -188,8 +188,8 @@
                 name: 'assert'
             });
         });
-        it('#argumentSignitures', function () {
-            assert.deepEqual(this.matcher.argumentSignitures(), [
+        it('#argumentSignatures', function () {
+            assert.deepEqual(this.matcher.argumentSignatures(), [
                 {name: 'actual', kind: 'mandatory'}
             ]);
         });
@@ -272,8 +272,8 @@
                 }
             });
         });
-        it('#argumentSignitures', function () {
-            assert.deepEqual(this.matcher.argumentSignitures(), [
+        it('#argumentSignatures', function () {
+            assert.deepEqual(this.matcher.argumentSignatures(), [
                 {name: 'actual', kind: 'mandatory'},
                 {name: 'expected', kind: 'mandatory'}
             ]);

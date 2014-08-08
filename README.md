@@ -82,7 +82,7 @@ var matcher = escallmatch('assert.equal(actual, expected, [message])');
 
 Any arguments enclosed in bracket (for example, `[message]`) means optional parameters. Without bracket means mandatory parameters.
 
-Returns `matcher` object having four methods, `test`, `matchArgument`, `calleeAst`, and `argumentSignitures`.
+Returns `matcher` object having four methods, `test`, `matchArgument`, `calleeAst`, and `argumentSignatures`.
 
 
 ### var isMatched = matcher.test(node)
@@ -107,12 +107,12 @@ Returns match result object representing whether `node` (and its `parentNode`) m
 
 ### var calleeAst = matcher.calleeAst()
 
-Returns clone of callee AST object based on signiture passed to `escallmatch` function. Returned tree is one of AST node objects defined in [Mozilla JavaScript AST spec](https://developer.mozilla.org/en-US/docs/SpiderMonkey/Parser_API) (in most cases, `Identifier` or `MemberExpression`).
+Returns clone of callee AST object based on signature passed to `escallmatch` function. Returned tree is one of AST node objects defined in [Mozilla JavaScript AST spec](https://developer.mozilla.org/en-US/docs/SpiderMonkey/Parser_API) (in most cases, `Identifier` or `MemberExpression`).
 
 
-### var argSigs = matcher.argumentSignitures()
+### var argSigs = matcher.argumentSignatures()
 
-Returns array of argument signiture objects based on signiture passed to `escallmatch` function. Returns array of objects like `[{name: 'actual', kind: 'mandatory'}]`, whose `name` is an argument name in the signature and `kind` is `'mandatory'` or `'optional'`.
+Returns array of argument signature objects based on signature passed to `escallmatch` function. Returns array of objects like `[{name: 'actual', kind: 'mandatory'}]`, whose `name` is an argument name in the signature and `kind` is `'mandatory'` or `'optional'`.
 
 
 
