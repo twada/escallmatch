@@ -1,3 +1,11 @@
+### 0.3.1 (2014-08-18)
+
+
+#### Bug Fixes
+
+* **escallmatch:** dealing with optional parameters in the middle ([05faf341](https://github.com/twada/escallmatch/commit/05faf34123b6b05ac9859a46779c749e33493ad8))
+
+
 ## 0.3.0 (2014-08-08)
 
 
