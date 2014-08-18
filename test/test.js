@@ -97,6 +97,73 @@
     });
 
 
+    describe('optional parameter in the middle, glob(pattern, [options], cb)', function () {
+        beforeEach(function () {
+            this.matcher = escallmatch('glob(pattern, [options], cb)');
+        });
+        it('#calleeAst', function () {
+            assert.deepEqual(this.matcher.calleeAst(), {
+                type: 'Identifier',
+                name: 'glob'
+            });
+        });
+        it('#argumentSignatures', function () {
+            assert.deepEqual(this.matcher.argumentSignatures(), [
+                {name: 'pattern', kind: 'mandatory'},
+                {name: 'options', kind: 'optional'},
+                {name: 'cb', kind: 'mandatory'}
+            ]);
+        });
+        it('three args', function () {
+            var code = '';
+            code += 'var glob = require("glob");';
+            code += 'glob("**/*.js", opts, function (er, files) {';
+            code += '    if (er) console.log(er);';
+            code += '    console.log(JSON.stringify(files));';
+            code += '});';
+            var matched = matchCode(this.matcher, code);
+            assert.equal(matched.calls.length, 1);
+            assert.equal(matched.args.length, 3);
+            assert.deepEqual(matched.args[0], {name: 'pattern', kind: 'mandatory'});
+            assert.deepEqual(matched.args[1], {name: 'options', kind: 'optional'});
+            assert.deepEqual(matched.args[2], {name: 'cb', kind: 'mandatory'});
+            assert(matched.captured['pattern']);
+            assert(matched.captured['options']);
+            assert(matched.captured['cb']);
+            assert.deepEqual(espurify(matched.captured['pattern']), {
+                type: 'Literal',
+                value: '**/*.js'
+            });
+            assert.deepEqual(espurify(matched.captured['options']), {
+                type: 'Identifier',
+                name: 'opts'
+            });
+            assert.equal(espurify(matched.captured['cb']).type, 'FunctionExpression');
+        });
+        it('two args', function () {
+            var code = '';
+            code += 'var glob = require("glob");';
+            code += 'glob("**/*.js", function (er, files) {';
+            code += '    if (er) console.log(er);';
+            code += '    console.log(JSON.stringify(files));';
+            code += '});';
+            var matched = matchCode(this.matcher, code);
+            assert.equal(matched.calls.length, 1);
+            assert.equal(matched.args.length, 2);
+            assert.deepEqual(matched.args[0], {name: 'pattern', kind: 'mandatory'});
+            assert.deepEqual(matched.args[1], {name: 'cb', kind: 'mandatory'});
+            assert(matched.captured['pattern']);
+            assert(! matched.captured['options']);
+            assert(matched.captured['cb']);
+            assert.deepEqual(espurify(matched.captured['pattern']), {
+                type: 'Literal',
+                value: '**/*.js'
+            });
+            assert.equal(espurify(matched.captured['cb']).type, 'FunctionExpression');
+        });
+    });
+
+
     describe('optional parameter assert(actual, [message])', function () {
         beforeEach(function () {
             this.matcher = escallmatch('assert(actual, [message])');
