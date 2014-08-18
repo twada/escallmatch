@@ -138,6 +138,11 @@ Then load (`escallmatch` function is exported)
 
 
 
+CHANGELOG
+---------------------------------------
+See [CHANGELOG](https://github.com/twada/escallmatch/blob/master/CHANGELOG.md)
+
+
 AUTHOR
 ---------------------------------------
 * [Takuto Wada](http://github.com/twada)
