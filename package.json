@@ -1,23 +1,13 @@
 {
   "name": "escallmatch",
-  "version": "0.3.1",
   "description": "ECMAScript CallExpression matcher made from function/method signature",
-  "keywords": [
-    "ecmascript",
-    "ast"
-  ],
-  "main": "./index.js",
-  "files": [
-    "CHANGELOG.md",
-    "README.md",
-    "gulpfile.js",
-    "index.js",
-    "package.json",
-    "test"
-  ],
-  "directories": {
-    "test": "test/"
+  "version": "0.3.1",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
   },
+  "bugs": "https://github.com/twada/escallmatch/issues",
   "dependencies": {
     "deep-equal": "~0.2.1",
     "esprima": "~1.2.2",
@@ -38,26 +28,34 @@
     "mocha": "~1.21.4",
     "vinyl-source-stream": "~0.1.1"
   },
-  "scripts": {
-    "bower": "bower install --config.interactive=false",
-    "jshint": "gulp lint",
-    "test": "gulp test"
+  "directories": {
+    "test": "test/"
   },
-  "author": {
-    "name": "Takuto Wada",
-    "email": "takuto.wada@gmail.com",
-    "url": "https://github.com/twada"
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "gulpfile.js",
+    "index.js",
+    "package.json",
+    "test"
+  ],
+  "homepage": "https://github.com/twada/escallmatch",
+  "keywords": [
+    "ecmascript",
+    "ast"
+  ],
+  "license": {
+    "type": "MIT",
+    "url": "http://twada.mit-license.org/"
   },
+  "main": "./index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/twada/escallmatch.git"
   },
-  "homepage": "https://github.com/twada/escallmatch",
-  "bugs": "https://github.com/twada/escallmatch/issues",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://twada.mit-license.org/"
-    }
-  ]
+  "scripts": {
+    "bower": "bower install --config.interactive=false",
+    "jshint": "gulp lint",
+    "test": "gulp test"
+  }
 }
