@@ -11,21 +11,21 @@
   "dependencies": {
     "deep-equal": "~0.2.1",
     "esprima": "~1.2.2",
-    "espurify": "~0.1.3",
-    "estraverse": "~1.5.1"
+    "espurify": "~1.0.0",
+    "estraverse": "~1.7.0"
   },
   "devDependencies": {
-    "browserify": "~6.0.3",
+    "browserify": "~6.2.0",
     "del": "~0.1.3",
-    "gulp": "~3.8.8",
+    "gulp": "~3.8.9",
     "gulp-derequire": "~2.0.0",
-    "gulp-jshint": "~1.8.5",
+    "gulp-jshint": "~1.8.6",
     "gulp-mocha": "~1.1.1",
-    "gulp-mocha-phantomjs": "~0.5.0",
+    "gulp-mocha-phantomjs": "~0.5.1",
     "gulp-util": "~3.0.1",
-    "gulp-webserver": "~0.8.2",
+    "gulp-webserver": "~0.8.3",
     "jshint-stylish": "~1.0.0",
-    "mocha": "~1.21.5",
+    "mocha": "~2.0.1",
     "vinyl-source-stream": "~1.0.0"
   },
   "directories": {
