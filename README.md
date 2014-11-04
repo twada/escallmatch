@@ -65,8 +65,9 @@ anotherAssert.equal(foo, bar);  // does not match (callee object name differs)
 equal(foo, bar);  // does not match (callee does not match)
 ```
 
-Please note that `escallmatch` is a beta version product. Pull-requests, issue reports and patches are always welcomed. `escallmatch` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
+`escallmatch` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
 
+Pull-requests, issue reports and patches are always welcomed.
 
 
 API
