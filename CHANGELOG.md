@@ -1,4 +1,10 @@
-### 0.3.1 (2014-08-18)
+## [1.0.0](https://github.com/twada/escallmatch/releases/tag/v1.0.0) (2014-11-04)
+
+
+The first stable release.
+
+
+### [0.3.1](https://github.com/twada/escallmatch/releases/tag/v0.3.1) (2014-08-18)
 
 
 #### Bug Fixes
@@ -6,7 +12,7 @@
 * **escallmatch:** dealing with optional parameters in the middle ([05faf341](https://github.com/twada/escallmatch/commit/05faf34123b6b05ac9859a46779c749e33493ad8))
 
 
-## 0.3.0 (2014-08-08)
+## [0.3.0](https://github.com/twada/escallmatch/releases/tag/v0.3.0) (2014-08-08)
 
 
 #### Bug Fixes
@@ -34,7 +40,7 @@ To:
  ([f5cedac8](https://github.com/twada/escallmatch/commit/f5cedac849717f714f7e1162c28068f518b46532))
 
 
-### 0.2.0 (2014-08-04)
+### [0.2.0](https://github.com/twada/escallmatch/releases/tag/v0.2.0) (2014-08-04)
 
 
 #### Features
@@ -44,10 +50,10 @@ To:
   * calleeAst method that returns clone of callee in signiture ([0df6baed](https://github.com/twada/escallmatch/commit/0df6baed4510aaf22df3084559722e4cce36e13a))
 
 
-### 0.1.1 (2014-08-01)
+### [0.1.1](https://github.com/twada/escallmatch/releases/tag/v0.1.1) (2014-08-01)
 
 
-### 0.1.0 (2014-07-31)
+### [0.1.0](https://github.com/twada/escallmatch/releases/tag/v0.1.0) (2014-07-31)
 
 
 #### Features
