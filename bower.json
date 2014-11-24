@@ -30,7 +30,7 @@
     "es5-shim": "~4.0.3",
     "esprima": "~1.2.2",
     "espurify": "~1.0.0",
-    "estraverse": "~1.7.0",
+    "estraverse": "~1.8.0",
     "mocha": "~2.0.1",
     "requirejs": "~2.1.15"
   }
