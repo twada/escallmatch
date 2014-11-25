@@ -111,7 +111,7 @@ function isSameAstDepth (ast, depth) {
                 currentDepth = pathDepth;
             }
             if (depth < currentDepth) {
-                this.break();
+                this['break']();
             }
         }
     });
@@ -5072,21 +5072,27 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     };
 
     Controller.prototype.replace = function replace(root, visitor) {
-        function removeElem() {
+        function removeElem(element) {
             var i,
+                key,
                 nextElem,
                 parent;
 
             if (element.ref.remove()) {
+                // When the reference is an element of an array.
+                key = element.ref.key;
                 parent = element.ref.parent;
 
-                // if removed from array, then shift following items' keys
-                for (i = 1; i < worklist.length; i++) {
+                // If removed from array, then decrease following items' keys.
+                i = worklist.length;
+                while (i--) {
                     nextElem = worklist[i];
-                    if (nextElem === sentinel || nextElem.ref.parent !== parent) {
-                        break;
+                    if (nextElem.ref && nextElem.ref.parent === parent) {
+                        if  (nextElem.ref.key < key) {
+                            break;
+                        }
+                        --nextElem.ref.key;
                     }
-                    nextElem.path[nextElem.path.length - 1] = --nextElem.ref.key;
                 }
             }
         }
@@ -5137,7 +5143,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
                 }
 
                 if (this.__state === REMOVE || target === REMOVE) {
-                    removeElem();
+                    removeElem(element);
                 }
 
                 if (this.__state === BREAK || target === BREAK) {
@@ -5157,7 +5163,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
             }
 
             if (this.__state === REMOVE || target === REMOVE) {
-                removeElem();
+                removeElem(element);
                 element.node = null;
             }
 
@@ -5346,7 +5352,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         return tree;
     }
 
-    exports.version = '1.5.1-dev';
+    exports.version = '1.7.1';
     exports.Syntax = Syntax;
     exports.traverse = traverse;
     exports.replace = replace;
