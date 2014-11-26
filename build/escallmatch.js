@@ -4890,6 +4890,13 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     };
 
     // API:
+    // return type of current node
+    Controller.prototype.type = function () {
+        var node = this.current();
+        return node.type || this.__current.wrap;
+    };
+
+    // API:
     // return array of parent elements
     Controller.prototype.parents = function parents() {
         var i, iz, result;
@@ -5352,7 +5359,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         return tree;
     }
 
-    exports.version = '1.7.1';
+    exports.version = '1.8.0';
     exports.Syntax = Syntax;
     exports.traverse = traverse;
     exports.replace = replace;
