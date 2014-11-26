@@ -6,6 +6,6 @@ before_install:
   - "npm install -g gulp"
   - "npm install -g bower"
 before_script:
-  - "npm run-script bower"
+  - "npm run bower"
 script:
   - "npm test"

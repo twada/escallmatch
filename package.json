@@ -56,7 +56,7 @@
   },
   "scripts": {
     "bower": "bower install --config.interactive=false",
-    "jshint": "gulp lint",
+    "lint": "gulp lint",
     "test": "gulp test"
   }
 }
