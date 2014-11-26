@@ -9,6 +9,7 @@ var gulp = require('gulp'),
     source = require('vinyl-source-stream'),
     browserify = require('browserify'),
     derequire = require('gulp-derequire'),
+    dereserve = require('gulp-dereserve'),
     config = {
         jshint: {
             src: './index.js'
@@ -53,6 +54,7 @@ gulp.task('bundle', ['clean_bundle'], function() {
     var bundleStream = browserify({entries: config.bundle.srcFile, standalone: config.bundle.standalone}).bundle();
     return bundleStream
         .pipe(source(config.bundle.destName))
+        .pipe(dereserve())
         .pipe(derequire())
         .pipe(gulp.dest(config.bundle.destDir));
 });

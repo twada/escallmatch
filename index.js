@@ -110,7 +110,7 @@ function isSameAstDepth (ast, depth) {
                 currentDepth = pathDepth;
             }
             if (depth < currentDepth) {
-                this.break();
+                this['break']();
             }
         }
     });

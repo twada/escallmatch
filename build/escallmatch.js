@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.escallmatch=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.escallmatch=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw (f.code="MODULE_NOT_FOUND", f)}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
  * escallmatch:
  *   ECMAScript CallExpression matcher made from function/method signature
@@ -111,7 +111,7 @@ function isSameAstDepth (ast, depth) {
                 currentDepth = pathDepth;
             }
             if (depth < currentDepth) {
-                this.break();
+                this['break']();
             }
         }
     });
@@ -5072,21 +5072,27 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     };
 
     Controller.prototype.replace = function replace(root, visitor) {
-        function removeElem() {
+        function removeElem(element) {
             var i,
+                key,
                 nextElem,
                 parent;
 
             if (element.ref.remove()) {
+                // When the reference is an element of an array.
+                key = element.ref.key;
                 parent = element.ref.parent;
 
-                // if removed from array, then shift following items' keys
-                for (i = 1; i < worklist.length; i++) {
+                // If removed from array, then decrease following items' keys.
+                i = worklist.length;
+                while (i--) {
                     nextElem = worklist[i];
-                    if (nextElem === sentinel || nextElem.ref.parent !== parent) {
-                        break;
+                    if (nextElem.ref && nextElem.ref.parent === parent) {
+                        if  (nextElem.ref.key < key) {
+                            break;
+                        }
+                        --nextElem.ref.key;
                     }
-                    nextElem.path[nextElem.path.length - 1] = --nextElem.ref.key;
                 }
             }
         }
@@ -5137,7 +5143,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
                 }
 
                 if (this.__state === REMOVE || target === REMOVE) {
-                    removeElem();
+                    removeElem(element);
                 }
 
                 if (this.__state === BREAK || target === BREAK) {
@@ -5157,7 +5163,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
             }
 
             if (this.__state === REMOVE || target === REMOVE) {
-                removeElem();
+                removeElem(element);
                 element.node = null;
             }
 
@@ -5346,7 +5352,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         return tree;
     }
 
-    exports.version = '1.5.1-dev';
+    exports.version = '1.7.1';
     exports.Syntax = Syntax;
     exports.traverse = traverse;
     exports.replace = replace;
