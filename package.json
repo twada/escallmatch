@@ -12,7 +12,7 @@
     "deep-equal": "~0.2.1",
     "esprima": "~1.2.2",
     "espurify": "~1.0.0",
-    "estraverse": "~1.7.0"
+    "estraverse": "~1.8.0"
   },
   "devDependencies": {
     "browserify": "^6.3.2",
