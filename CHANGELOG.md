@@ -1,3 +1,11 @@
+### [1.0.1](https://github.com/twada/escallmatch/releases/tag/v1.0.1) (2014-11-27)
+
+
+#### Bug Fixes
+
+* **escallmatch:** avoid using ES3 reserved words. ([58eeeaaf](https://github.com/twada/escallmatch/commit/58eeeaaf7a8381269a4c1c6bf434a6d70708b0d0), closes [#1](https://github.com/twada/escallmatch/issues/1))
+
+
 ## [1.0.0](https://github.com/twada/escallmatch/releases/tag/v1.0.0) (2014-11-04)
 
 
