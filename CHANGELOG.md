@@ -1,3 +1,15 @@
+## [1.1.0](https://github.com/twada/escallmatch/releases/tag/v1.1.0) (2015-02-25)
+
+
+#### Features
+
+* **escallmatch:**
+  * use semantic versioning to resolve dependencies ([3a7c0b40](https://github.com/twada/escallmatch/commit/3a7c0b4009fc1f9934d2f4037f621960f8d01d08))
+  * update deep-equal to 1.0.0 ([7879a92d](https://github.com/twada/escallmatch/commit/7879a92d918587c79c24c283eb53e90f77fb926a))
+  * run CI on Node 0.12 and io.js ([ce671bfc](https://github.com/twada/escallmatch/commit/ce671bfc0eb119e7bd6538f3d1b3cb131d5c84ac))
+  * ship npm module with built bundle for browsers ([e96bc59d](https://github.com/twada/escallmatch/commit/e96bc59df2fb4b86506cc8678d5764ffa64c9ccf))
+
+
 ### [1.0.1](https://github.com/twada/escallmatch/releases/tag/v1.0.1) (2014-11-27)
 
 
