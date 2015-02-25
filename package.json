@@ -37,6 +37,7 @@
     "README.md",
     "gulpfile.js",
     "index.js",
+    "build/escallmatch.js",
     "package.json",
     "test"
   ],
