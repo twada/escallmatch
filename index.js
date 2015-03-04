@@ -20,6 +20,7 @@ var esprima = require('esprima'),
     map = require('array-map'),
     filter = require('array-filter'),
     reduce = require('array-reduce'),
+    indexOf = require('indexof'),
     deepEqual = require('deep-equal'),
     notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
@@ -52,7 +53,7 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
         return null;
     }
     if (this.test(parentNode)) {
-        var indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
+        var indexOfCurrentArg = indexOf(parentNode.arguments, currentNode);
         var numOptional = parentNode.arguments.length - this.numMinArgs;
         var matchedSignatures = reduce(this.argumentSignatures(), function (accum, argSig) {
             if (argSig.kind === 'mandatory') {

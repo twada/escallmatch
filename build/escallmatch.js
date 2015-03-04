@@ -21,6 +21,7 @@ var esprima = _dereq_('esprima'),
     map = _dereq_('array-map'),
     filter = _dereq_('array-filter'),
     reduce = _dereq_('array-reduce'),
+    indexOf = _dereq_('indexof'),
     deepEqual = _dereq_('deep-equal'),
     notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
@@ -53,7 +54,7 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
         return null;
     }
     if (this.test(parentNode)) {
-        var indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
+        var indexOfCurrentArg = indexOf(parentNode.arguments, currentNode);
         var numOptional = parentNode.arguments.length - this.numMinArgs;
         var matchedSignatures = reduce(this.argumentSignatures(), function (accum, argSig) {
             if (argSig.kind === 'mandatory') {
@@ -197,7 +198,7 @@ function extractExpressionFrom (tree) {
 
 module.exports = createMatcher;
 
-},{"array-filter":2,"array-foreach":3,"array-map":4,"array-reduce":5,"deep-equal":6,"esprima":9,"espurify":10,"estraverse":14}],2:[function(_dereq_,module,exports){
+},{"array-filter":2,"array-foreach":3,"array-map":4,"array-reduce":5,"deep-equal":6,"esprima":9,"espurify":10,"estraverse":14,"indexof":15}],2:[function(_dereq_,module,exports){
 
 /**
  * Array#filter.
@@ -5470,5 +5471,16 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 }));
 /* vim: set sw=4 ts=4 et tw=80 : */
 
+},{}],15:[function(_dereq_,module,exports){
+
+var indexOf = [].indexOf;
+
+module.exports = function(arr, obj){
+  if (indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
 },{}]},{},[1])(1)
 });
