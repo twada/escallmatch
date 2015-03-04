@@ -9,6 +9,7 @@
   },
   "bugs": "https://github.com/twada/escallmatch/issues",
   "dependencies": {
+    "array-filter": "^0.2.0",
     "array-foreach": "^1.0.0",
     "array-map": "0.0.0",
     "deep-equal": "^1.0.0",

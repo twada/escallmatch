@@ -19,6 +19,7 @@ var esprima = _dereq_('esprima'),
     hasOwn = Object.prototype.hasOwnProperty,
     forEach = _dereq_('array-foreach'),
     map = _dereq_('array-map'),
+    filter = _dereq_('array-filter'),
     deepEqual = _dereq_('deep-equal'),
     notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
@@ -33,7 +34,7 @@ function Matcher (signatureAst) {
     this.signatureAst = signatureAst;
     this.signatureCalleeDepth = astDepth(signatureAst.callee);
     this.numMaxArgs = this.signatureAst.arguments.length;
-    this.numMinArgs = this.signatureAst.arguments.filter(identifiers).length;
+    this.numMinArgs = filter(this.signatureAst.arguments, identifiers).length;
 }
 
 Matcher.prototype.test = function (currentNode) {
@@ -195,7 +196,34 @@ function extractExpressionFrom (tree) {
 
 module.exports = createMatcher;
 
-},{"array-foreach":2,"array-map":3,"deep-equal":4,"esprima":7,"espurify":8,"estraverse":12}],2:[function(_dereq_,module,exports){
+},{"array-filter":2,"array-foreach":3,"array-map":4,"deep-equal":5,"esprima":8,"espurify":9,"estraverse":13}],2:[function(_dereq_,module,exports){
+
+/**
+ * Array#filter.
+ *
+ * @param {Array} arr
+ * @param {Function} fn
+ * @param {Object=} self
+ * @return {Array}
+ * @throw TypeError
+ */
+
+module.exports = function (arr, fn, self) {
+  if (arr.filter) return arr.filter(fn);
+  if (void 0 === arr || null === arr) throw new TypeError;
+  if ('function' != typeof fn) throw new TypeError;
+  var ret = [];
+  for (var i = 0; i < arr.length; i++) {
+    if (!hasOwn.call(arr, i)) continue;
+    var val = arr[i];
+    if (fn.call(self, val, i, arr)) ret.push(val);
+  }
+  return ret;
+};
+
+var hasOwn = Object.prototype.hasOwnProperty;
+
+},{}],3:[function(_dereq_,module,exports){
 /**
  * array-foreach
  *   Array#forEach ponyfill for older browsers
@@ -225,7 +253,7 @@ module.exports = function forEach (ary, callback, thisArg) {
     }
 };
 
-},{}],3:[function(_dereq_,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 module.exports = function (xs, f) {
     if (xs.map) return xs.map(f);
     var res = [];
@@ -238,7 +266,7 @@ module.exports = function (xs, f) {
 
 var hasOwn = Object.prototype.hasOwnProperty;
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 var pSlice = Array.prototype.slice;
 var objectKeys = _dereq_('./lib/keys.js');
 var isArguments = _dereq_('./lib/is_arguments.js');
@@ -334,7 +362,7 @@ function objEquiv(a, b, opts) {
   return typeof a === typeof b;
 }
 
-},{"./lib/is_arguments.js":5,"./lib/keys.js":6}],5:[function(_dereq_,module,exports){
+},{"./lib/is_arguments.js":6,"./lib/keys.js":7}],6:[function(_dereq_,module,exports){
 var supportsArgumentsClass = (function(){
   return Object.prototype.toString.call(arguments)
 })() == '[object Arguments]';
@@ -356,7 +384,7 @@ function unsupported(object){
     false;
 };
 
-},{}],6:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 exports = module.exports = typeof Object.keys === 'function'
   ? Object.keys : shim;
 
@@ -367,7 +395,7 @@ function shim (obj) {
   return keys;
 }
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 /*
   Copyright (C) 2013 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2013 Thaddee Tyl <thaddee.tyl@gmail.com>
@@ -4126,7 +4154,7 @@ parseStatement: true, parseSourceElement: true */
 }));
 /* vim: set sw=4 ts=4 et tw=80 : */
 
-},{}],8:[function(_dereq_,module,exports){
+},{}],9:[function(_dereq_,module,exports){
 /**
  * espurify - Clone new AST without extra properties
  * 
@@ -4168,7 +4196,7 @@ function isSupportedKey (type, key) {
 
 module.exports = espurify;
 
-},{"./lib/ast-deepcopy":9,"./lib/ast-properties":10,"traverse":11}],9:[function(_dereq_,module,exports){
+},{"./lib/ast-deepcopy":10,"./lib/ast-properties":11,"traverse":12}],10:[function(_dereq_,module,exports){
 /**
  * Copyright (C) 2012 Yusuke Suzuki (twitter: @Constellation) and other contributors.
  * Released under the BSD license.
@@ -4207,7 +4235,7 @@ function deepCopy (obj) {
 
 module.exports = deepCopy;
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 module.exports = {
     AssignmentExpression: ['type', 'operator', 'left', 'right'],
     ArrayExpression: ['type', 'elements'],
@@ -4260,7 +4288,7 @@ module.exports = {
     YieldExpression: ['type', 'argument']
 };
 
-},{}],11:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 var traverse = module.exports = function (obj) {
     return new Traverse(obj);
 };
@@ -4576,7 +4604,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     return key in obj;
 };
 
-},{}],12:[function(_dereq_,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 /*
   Copyright (C) 2012-2013 Yusuke Suzuki <utatane.tea@gmail.com>
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>

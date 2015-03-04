@@ -18,6 +18,7 @@ var esprima = require('esprima'),
     hasOwn = Object.prototype.hasOwnProperty,
     forEach = require('array-foreach'),
     map = require('array-map'),
+    filter = require('array-filter'),
     deepEqual = require('deep-equal'),
     notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
@@ -32,7 +33,7 @@ function Matcher (signatureAst) {
     this.signatureAst = signatureAst;
     this.signatureCalleeDepth = astDepth(signatureAst.callee);
     this.numMaxArgs = this.signatureAst.arguments.length;
-    this.numMinArgs = this.signatureAst.arguments.filter(identifiers).length;
+    this.numMinArgs = filter(this.signatureAst.arguments, identifiers).length;
 }
 
 Matcher.prototype.test = function (currentNode) {
