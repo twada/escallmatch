@@ -17,6 +17,7 @@ var esprima = _dereq_('esprima'),
     espurify = _dereq_('espurify'),
     syntax = estraverse.Syntax,
     hasOwn = Object.prototype.hasOwnProperty,
+    forEach = _dereq_('array-foreach'),
     deepEqual = _dereq_('deep-equal'),
     notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
@@ -151,7 +152,7 @@ function validateApiExpression (callExpression) {
         throw new Error(notCallExprMessage);
     }
     var names = {};
-    callExpression.arguments.forEach(function (arg) {
+    forEach(callExpression.arguments, function (arg) {
         var name = validateArg(arg);
         if (hasOwn.call(names, name)) {
             throw new Error(duplicatedArgMessage + name);
@@ -193,7 +194,37 @@ function extractExpressionFrom (tree) {
 
 module.exports = createMatcher;
 
-},{"deep-equal":2,"esprima":5,"espurify":6,"estraverse":10}],2:[function(_dereq_,module,exports){
+},{"array-foreach":2,"deep-equal":3,"esprima":6,"espurify":7,"estraverse":11}],2:[function(_dereq_,module,exports){
+/**
+ * array-foreach
+ *   Array#forEach ponyfill for older browsers
+ *   (Ponyfill: A polyfill that doesn't overwrite the native method)
+ * 
+ * https://github.com/twada/array-foreach
+ *
+ * Copyright (c) 2015 Takuto Wada
+ * Licensed under the MIT license.
+ *   http://twada.mit-license.org/
+ */
+'use strict';
+
+module.exports = function forEach (ary, callback, thisArg) {
+    if (ary.forEach) {
+        ary.forEach(callback, thisArg);
+        return;
+    }
+    if (typeof ary === 'undefined' || ary === null) {
+        throw new TypeError();
+    }
+    if (typeof callback !== 'function') {
+        throw new TypeError();
+    }
+    for (var i = 0; i < ary.length; i+=1) {
+        callback.call(thisArg, ary[i], i, ary);
+    }
+};
+
+},{}],3:[function(_dereq_,module,exports){
 var pSlice = Array.prototype.slice;
 var objectKeys = _dereq_('./lib/keys.js');
 var isArguments = _dereq_('./lib/is_arguments.js');
@@ -289,7 +320,7 @@ function objEquiv(a, b, opts) {
   return typeof a === typeof b;
 }
 
-},{"./lib/is_arguments.js":3,"./lib/keys.js":4}],3:[function(_dereq_,module,exports){
+},{"./lib/is_arguments.js":4,"./lib/keys.js":5}],4:[function(_dereq_,module,exports){
 var supportsArgumentsClass = (function(){
   return Object.prototype.toString.call(arguments)
 })() == '[object Arguments]';
@@ -311,7 +342,7 @@ function unsupported(object){
     false;
 };
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 exports = module.exports = typeof Object.keys === 'function'
   ? Object.keys : shim;
 
@@ -322,7 +353,7 @@ function shim (obj) {
   return keys;
 }
 
-},{}],5:[function(_dereq_,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 /*
   Copyright (C) 2013 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2013 Thaddee Tyl <thaddee.tyl@gmail.com>
@@ -4081,7 +4112,7 @@ parseStatement: true, parseSourceElement: true */
 }));
 /* vim: set sw=4 ts=4 et tw=80 : */
 
-},{}],6:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 /**
  * espurify - Clone new AST without extra properties
  * 
@@ -4123,7 +4154,7 @@ function isSupportedKey (type, key) {
 
 module.exports = espurify;
 
-},{"./lib/ast-deepcopy":7,"./lib/ast-properties":8,"traverse":9}],7:[function(_dereq_,module,exports){
+},{"./lib/ast-deepcopy":8,"./lib/ast-properties":9,"traverse":10}],8:[function(_dereq_,module,exports){
 /**
  * Copyright (C) 2012 Yusuke Suzuki (twitter: @Constellation) and other contributors.
  * Released under the BSD license.
@@ -4162,7 +4193,7 @@ function deepCopy (obj) {
 
 module.exports = deepCopy;
 
-},{}],8:[function(_dereq_,module,exports){
+},{}],9:[function(_dereq_,module,exports){
 module.exports = {
     AssignmentExpression: ['type', 'operator', 'left', 'right'],
     ArrayExpression: ['type', 'elements'],
@@ -4215,7 +4246,7 @@ module.exports = {
     YieldExpression: ['type', 'argument']
 };
 
-},{}],9:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 var traverse = module.exports = function (obj) {
     return new Traverse(obj);
 };
@@ -4531,7 +4562,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     return key in obj;
 };
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 /*
   Copyright (C) 2012-2013 Yusuke Suzuki <utatane.tea@gmail.com>
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>

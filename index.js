@@ -16,6 +16,7 @@ var esprima = require('esprima'),
     espurify = require('espurify'),
     syntax = estraverse.Syntax,
     hasOwn = Object.prototype.hasOwnProperty,
+    forEach = require('array-foreach'),
     deepEqual = require('deep-equal'),
     notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
@@ -150,7 +151,7 @@ function validateApiExpression (callExpression) {
         throw new Error(notCallExprMessage);
     }
     var names = {};
-    callExpression.arguments.forEach(function (arg) {
+    forEach(callExpression.arguments, function (arg) {
         var name = validateArg(arg);
         if (hasOwn.call(names, name)) {
             throw new Error(duplicatedArgMessage + name);
