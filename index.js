@@ -17,6 +17,7 @@ var esprima = require('esprima'),
     syntax = estraverse.Syntax,
     hasOwn = Object.prototype.hasOwnProperty,
     forEach = require('array-foreach'),
+    map = require('array-map'),
     deepEqual = require('deep-equal'),
     notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
@@ -71,7 +72,7 @@ Matcher.prototype.calleeAst = function () {
 };
 
 Matcher.prototype.argumentSignatures = function () {
-    return this.signatureAst.arguments.map(toArgumentSignature);
+    return map(this.signatureAst.arguments, toArgumentSignature);
 };
 
 function toArgumentSignature (argSignatureNode) {
