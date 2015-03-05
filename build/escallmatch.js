@@ -1250,6 +1250,24 @@ parseStatement: true, parseSourceElement: true */
         };
     }
 
+    function isImplicitOctalLiteral() {
+        var i, ch;
+
+        // Implicit octal, unless there is a non-octal digit.
+        // (Annex B.1.1 on Numeric Literals)
+        for (i = index + 1; i < length; ++i) {
+            ch = source[i];
+            if (ch === '8' || ch === '9') {
+                return false;
+            }
+            if (!isOctalDigit(ch)) {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
     function scanNumericLiteral() {
         var number, start, ch;
 
@@ -1271,12 +1289,9 @@ parseStatement: true, parseSourceElement: true */
                     return scanHexLiteral(start);
                 }
                 if (isOctalDigit(ch)) {
-                    return scanOctalLiteral(start);
-                }
-
-                // decimal number starts with '0' such as '09' is illegal.
-                if (ch && isDecimalDigit(ch.charCodeAt(0))) {
-                    throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
+                    if (isImplicitOctalLiteral()) {
+                        return scanOctalLiteral(start);
+                    }
                 }
             }
 
@@ -4139,7 +4154,7 @@ parseStatement: true, parseSourceElement: true */
     }
 
     // Sync with *.json manifests.
-    exports.version = '1.2.4';
+    exports.version = '1.2.5';
 
     exports.tokenize = tokenize;
 
@@ -4174,15 +4189,16 @@ parseStatement: true, parseSourceElement: true */
 /**
  * espurify - Clone new AST without extra properties
  * 
- * https://github.com/twada/espurify
+ * https://github.com/estools/espurify
  *
- * Copyright (c) 2014 Takuto Wada
+ * Copyright (c) 2014-2015 Takuto Wada
  * Licensed under the MIT license.
- *   http://twada.mit-license.org/
+ *   https://github.com/estools/espurify/blob/master/MIT-LICENSE.txt
  */
 'use strict';
 
 var traverse = _dereq_('traverse'),
+    indexOf = _dereq_('indexof'),
     deepCopy = _dereq_('./lib/ast-deepcopy'),
     astProps = _dereq_('./lib/ast-properties'),
     hasOwn = Object.prototype.hasOwnProperty;
@@ -4207,12 +4223,12 @@ function isSupportedNodeType (type) {
 }
 
 function isSupportedKey (type, key) {
-    return astProps[type].indexOf(key) !== -1;
+    return indexOf(astProps[type], key) !== -1;
 }
 
 module.exports = espurify;
 
-},{"./lib/ast-deepcopy":11,"./lib/ast-properties":12,"traverse":13}],11:[function(_dereq_,module,exports){
+},{"./lib/ast-deepcopy":11,"./lib/ast-properties":12,"indexof":15,"traverse":13}],11:[function(_dereq_,module,exports){
 /**
  * Copyright (C) 2012 Yusuke Suzuki (twitter: @Constellation) and other contributors.
  * Released under the BSD license.
@@ -4768,9 +4784,11 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     };
 
     function extend(to, from) {
-        objectKeys(from).forEach(function (key) {
+        var keys = objectKeys(from), key, i, len;
+        for (i = 0, len = keys.length; i < len; i += 1) {
+            key = keys[i];
             to[key] = from[key];
-        });
+        }
         return to;
     }
 
