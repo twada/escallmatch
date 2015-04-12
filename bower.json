@@ -28,10 +28,10 @@
   "devDependencies": {
     "assert": "Jxck/assert",
     "es5-shim": "~4.1.0",
-    "esprima": "~1.2.2",
-    "espurify": "~1.0.0",
+    "esprima": "~2.0.0",
+    "espurify": "~1.1.0",
     "estraverse": "~1.9.0",
-    "mocha": "~2.1.0",
+    "mocha": "~2.2.4",
     "requirejs": "~2.1.16"
   }
 }
