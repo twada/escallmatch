@@ -1,3 +1,16 @@
+## [1.2.0](https://github.com/twada/escallmatch/releases/tag/v1.2.0) (2015-04-12)
+
+
+#### Features
+	
+* **use ponyfills for older browsers**
+  * replace Array#forEach with [array-foreach](https://www.npmjs.org/package/array-foreach)
+  * replace Array#map with [array-map](https://www.npmjs.org/package/array-map)
+  * replace Array#filter with [array-filter](https://www.npmjs.org/package/array-filter)
+  * replace Array#reduce with [array-reduce](https://www.npmjs.org/package/array-reduce)
+  * replace Array#indexOf with [indexof](https://www.npmjs.org/package/indexof)
+
+
 ## [1.1.0](https://github.com/twada/escallmatch/releases/tag/v1.1.0) (2015-02-25)
 
 
