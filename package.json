@@ -9,10 +9,15 @@
   },
   "bugs": "https://github.com/twada/escallmatch/issues",
   "dependencies": {
+    "array-filter": "^0.2.0",
+    "array-foreach": "^1.0.1",
+    "array-map": "0.0.0",
+    "array-reduce": "0.0.0",
     "deep-equal": "^1.0.0",
     "esprima": "^1.0.0",
-    "espurify": "^1.0.0",
-    "estraverse": "^1.0.0"
+    "espurify": "^1.0.1",
+    "estraverse": "^1.0.0",
+    "indexof": "0.0.1"
   },
   "devDependencies": {
     "browserify": "^9.0.3",

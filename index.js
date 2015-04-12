@@ -16,6 +16,11 @@ var esprima = require('esprima'),
     espurify = require('espurify'),
     syntax = estraverse.Syntax,
     hasOwn = Object.prototype.hasOwnProperty,
+    forEach = require('array-foreach'),
+    map = require('array-map'),
+    filter = require('array-filter'),
+    reduce = require('array-reduce'),
+    indexOf = require('indexof'),
     deepEqual = require('deep-equal'),
     notCallExprMessage = 'Argument should be in the form of CallExpression',
     duplicatedArgMessage = 'Duplicate argument name: ',
@@ -30,7 +35,7 @@ function Matcher (signatureAst) {
     this.signatureAst = signatureAst;
     this.signatureCalleeDepth = astDepth(signatureAst.callee);
     this.numMaxArgs = this.signatureAst.arguments.length;
-    this.numMinArgs = this.signatureAst.arguments.filter(identifiers).length;
+    this.numMinArgs = filter(this.signatureAst.arguments, identifiers).length;
 }
 
 Matcher.prototype.test = function (currentNode) {
@@ -48,9 +53,9 @@ Matcher.prototype.matchArgument = function (currentNode, parentNode) {
         return null;
     }
     if (this.test(parentNode)) {
-        var indexOfCurrentArg = parentNode.arguments.indexOf(currentNode);
+        var indexOfCurrentArg = indexOf(parentNode.arguments, currentNode);
         var numOptional = parentNode.arguments.length - this.numMinArgs;
-        var matchedSignatures = this.argumentSignatures().reduce(function (accum, argSig) {
+        var matchedSignatures = reduce(this.argumentSignatures(), function (accum, argSig) {
             if (argSig.kind === 'mandatory') {
                 accum.push(argSig);
             }
@@ -70,7 +75,7 @@ Matcher.prototype.calleeAst = function () {
 };
 
 Matcher.prototype.argumentSignatures = function () {
-    return this.signatureAst.arguments.map(toArgumentSignature);
+    return map(this.signatureAst.arguments, toArgumentSignature);
 };
 
 function toArgumentSignature (argSignatureNode) {
@@ -150,7 +155,7 @@ function validateApiExpression (callExpression) {
         throw new Error(notCallExprMessage);
     }
     var names = {};
-    callExpression.arguments.forEach(function (arg) {
+    forEach(callExpression.arguments, function (arg) {
         var name = validateArg(arg);
         if (hasOwn.call(names, name)) {
             throw new Error(duplicatedArgMessage + name);
