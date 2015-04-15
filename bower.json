@@ -2,7 +2,7 @@
   "name": "escallmatch",
   "description": "ECMAScript CallExpression matcher made from function/method signature",
   "main": "build/escallmatch.js",
-  "license": "http://twada.mit-license.org/",
+  "license": "MIT",
   "ignore": [
     "**/.*",
     "index.js",
