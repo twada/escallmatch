@@ -198,7 +198,7 @@ function extractExpressionFrom (tree) {
 
 module.exports = createMatcher;
 
-},{"array-filter":2,"array-foreach":3,"array-map":4,"array-reduce":5,"deep-equal":6,"esprima":9,"espurify":10,"estraverse":14,"indexof":16}],2:[function(_dereq_,module,exports){
+},{"array-filter":2,"array-foreach":3,"array-map":4,"array-reduce":5,"deep-equal":6,"esprima":9,"espurify":10,"estraverse":18,"indexof":20}],2:[function(_dereq_,module,exports){
 
 /**
  * Array#filter.
@@ -4828,77 +4828,18 @@ function shim (obj) {
  */
 'use strict';
 
-var traverse = _dereq_('traverse'),
-    indexOf = _dereq_('indexof'),
-    deepCopy = _dereq_('./lib/ast-deepcopy'),
-    astProps = _dereq_('./lib/ast-properties'),
-    hasOwn = Object.prototype.hasOwnProperty;
+var createWhitelist = _dereq_('./lib/create-whitelist');
+var cloneWithWhitelist = _dereq_('./lib/clone-ast');
 
-function espurify (node) {
-    var result = deepCopy(node);
-    traverse(result).forEach(function (x) {
-        if (this.parent &&
-            this.parent.node &&
-            this.parent.node.type &&
-            isSupportedNodeType(this.parent.node.type) &&
-            !isSupportedKey(this.parent.node.type, this.key))
-        {
-            this.remove(true);
-        }
-    });
-    return result;
+function createCloneFunction (options) {
+    return cloneWithWhitelist(createWhitelist(options));
 }
 
-function isSupportedNodeType (type) {
-    return hasOwn.call(astProps, type);
-}
-
-function isSupportedKey (type, key) {
-    return indexOf(astProps[type], key) !== -1;
-}
-
+var espurify = createCloneFunction();
+espurify.customize = createCloneFunction;
 module.exports = espurify;
 
-},{"./lib/ast-deepcopy":11,"./lib/ast-properties":12,"indexof":16,"traverse":13}],11:[function(_dereq_,module,exports){
-/**
- * Copyright (C) 2012 Yusuke Suzuki (twitter: @Constellation) and other contributors.
- * Released under the BSD license.
- * https://github.com/Constellation/esmangle/blob/master/LICENSE.BSD
- */
-'use strict';
-
-var isArray = Array.isArray || function isArray (array) {
-    return Object.prototype.toString.call(array) === '[object Array]';
-};
-
-function deepCopyInternal (obj, result) {
-    var key, val;
-    for (key in obj) {
-        if (key.lastIndexOf('_', 0) === 0) {
-            continue;
-        }
-        if (obj.hasOwnProperty(key)) {
-            val = obj[key];
-            if (typeof val === 'object' && val !== null) {
-                if (val instanceof RegExp) {
-                    val = new RegExp(val);
-                } else {
-                    val = deepCopyInternal(val, isArray(val) ? [] : {});
-                }
-            }
-            result[key] = val;
-        }
-    }
-    return result;
-}
-
-function deepCopy (obj) {
-    return deepCopyInternal(obj, isArray(obj) ? [] : {});
-}
-
-module.exports = deepCopy;
-
-},{}],12:[function(_dereq_,module,exports){
+},{"./lib/clone-ast":12,"./lib/create-whitelist":13}],11:[function(_dereq_,module,exports){
 module.exports = {
     ArrayExpression: ['type', 'elements'],
     ArrayPattern: ['type', 'elements'],
@@ -4967,323 +4908,206 @@ module.exports = {
     YieldExpression: ['type', 'argument']
 };
 
-},{}],13:[function(_dereq_,module,exports){
-var traverse = module.exports = function (obj) {
-    return new Traverse(obj);
-};
+},{}],12:[function(_dereq_,module,exports){
+'use strict';
 
-function Traverse (obj) {
-    this.value = obj;
-}
+var isArray = _dereq_('isarray');
 
-Traverse.prototype.get = function (ps) {
-    var node = this.value;
-    for (var i = 0; i < ps.length; i ++) {
-        var key = ps[i];
-        if (!node || !hasOwnProperty.call(node, key)) {
-            node = undefined;
-            break;
-        }
-        node = node[key];
+module.exports = function cloneWithWhitelist (whitelist) {
+
+    function cloneRoot (ast) {
+        return cloneContainer({}, ast);
     }
-    return node;
-};
 
-Traverse.prototype.has = function (ps) {
-    var node = this.value;
-    for (var i = 0; i < ps.length; i ++) {
-        var key = ps[i];
-        if (!node || !hasOwnProperty.call(node, key)) {
-            return false;
+    function cloneContainer (collector, obj) {
+        if (isArray(obj)) {
+            return cloneArray(collector, obj);
+        } else if (obj.type && whitelist[obj.type]) {
+            return cloneNode(collector, obj);
+        } else {
+            return cloneObj(collector, obj);
         }
-        node = node[key];
     }
-    return true;
-};
 
-Traverse.prototype.set = function (ps, value) {
-    var node = this.value;
-    for (var i = 0; i < ps.length - 1; i ++) {
-        var key = ps[i];
-        if (!hasOwnProperty.call(node, key)) node[key] = {};
-        node = node[key];
-    }
-    node[ps[i]] = value;
-    return value;
-};
-
-Traverse.prototype.map = function (cb) {
-    return walk(this.value, cb, true);
-};
-
-Traverse.prototype.forEach = function (cb) {
-    this.value = walk(this.value, cb, false);
-    return this.value;
-};
-
-Traverse.prototype.reduce = function (cb, init) {
-    var skip = arguments.length === 1;
-    var acc = skip ? this.value : init;
-    this.forEach(function (x) {
-        if (!this.isRoot || !skip) {
-            acc = cb.call(this, acc, x);
+    function cloneArray (collector, ary) {
+        var i, len;
+        for (i = 0, len = ary.length; i < len; i += 1) {
+            collector.push(cloneOf(ary[i]));
         }
-    });
-    return acc;
+        return collector;
+    }
+
+    function cloneNode (collector, obj) {
+        var i, len, props = whitelist[obj.type];
+        for (i = 0, len = props.length; i < len; i += 1) {
+            cloneProperty(collector, obj, props[i]);
+        }
+        return collector;
+    }
+
+    function cloneObj (collector, obj) {
+        var key;
+        for (key in obj) {
+            cloneProperty(collector, obj, key);
+        }
+        return collector;
+    }
+
+    function cloneProperty (collector, obj, key) {
+        if (obj.hasOwnProperty(key)) {
+            collector[key] = cloneOf(obj[key]);
+        }
+    }
+
+    function cloneOf (val) {
+        if (typeof val === 'object' && val !== null) {
+            if (val instanceof RegExp) {
+                return new RegExp(val);
+            } else {
+                return cloneContainer(isArray(val) ? [] : {}, val);
+            }
+        } else {
+            return val;
+        }
+    }
+
+    return cloneRoot;
 };
 
-Traverse.prototype.paths = function () {
-    var acc = [];
-    this.forEach(function (x) {
-        acc.push(this.path); 
-    });
-    return acc;
+},{"isarray":14}],13:[function(_dereq_,module,exports){
+'use strict';
+
+var defaultProps = _dereq_('./ast-properties');
+var objectKeys = _dereq_('object-keys');
+var extend = _dereq_('xtend');
+
+module.exports = function createWhitelist (options) {
+    var opts = extend({}, options);
+    var typeName, i, len;
+    var keys = objectKeys(defaultProps);
+    var result = {};
+    for (i = 0, len = keys.length; i < len; i += 1) {
+        typeName = keys[i];
+        result[typeName] = [].concat(defaultProps[typeName]).concat(opts.extra);
+    }
+    return result;
 };
 
-Traverse.prototype.nodes = function () {
-    var acc = [];
-    this.forEach(function (x) {
-        acc.push(this.node);
-    });
-    return acc;
+},{"./ast-properties":11,"object-keys":15,"xtend":17}],14:[function(_dereq_,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-Traverse.prototype.clone = function () {
-    var parents = [], nodes = [];
-    
-    return (function clone (src) {
-        for (var i = 0; i < parents.length; i++) {
-            if (parents[i] === src) {
-                return nodes[i];
+},{}],15:[function(_dereq_,module,exports){
+'use strict';
+
+// modified from https://github.com/es-shims/es5-shim
+var has = Object.prototype.hasOwnProperty;
+var toStr = Object.prototype.toString;
+var isArgs = _dereq_('./isArguments');
+var hasDontEnumBug = !({ 'toString': null }).propertyIsEnumerable('toString');
+var hasProtoEnumBug = function () {}.propertyIsEnumerable('prototype');
+var dontEnums = [
+	'toString',
+	'toLocaleString',
+	'valueOf',
+	'hasOwnProperty',
+	'isPrototypeOf',
+	'propertyIsEnumerable',
+	'constructor'
+];
+
+var keysShim = function keys(object) {
+	var isObject = object !== null && typeof object === 'object';
+	var isFunction = toStr.call(object) === '[object Function]';
+	var isArguments = isArgs(object);
+	var isString = isObject && toStr.call(object) === '[object String]';
+	var theKeys = [];
+
+	if (!isObject && !isFunction && !isArguments) {
+		throw new TypeError('Object.keys called on a non-object');
+	}
+
+	var skipProto = hasProtoEnumBug && isFunction;
+	if (isString && object.length > 0 && !has.call(object, 0)) {
+		for (var i = 0; i < object.length; ++i) {
+			theKeys.push(String(i));
+		}
+	}
+
+	if (isArguments && object.length > 0) {
+		for (var j = 0; j < object.length; ++j) {
+			theKeys.push(String(j));
+		}
+	} else {
+		for (var name in object) {
+			if (!(skipProto && name === 'prototype') && has.call(object, name)) {
+				theKeys.push(String(name));
+			}
+		}
+	}
+
+	if (hasDontEnumBug) {
+		var ctor = object.constructor;
+		var skipConstructor = ctor && ctor.prototype === object;
+
+		for (var k = 0; k < dontEnums.length; ++k) {
+			if (!(skipConstructor && dontEnums[k] === 'constructor') && has.call(object, dontEnums[k])) {
+				theKeys.push(dontEnums[k]);
+			}
+		}
+	}
+	return theKeys;
+};
+
+keysShim.shim = function shimObjectKeys() {
+	if (!Object.keys) {
+		Object.keys = keysShim;
+	}
+	return Object.keys || keysShim;
+};
+
+module.exports = keysShim;
+
+},{"./isArguments":16}],16:[function(_dereq_,module,exports){
+'use strict';
+
+var toStr = Object.prototype.toString;
+
+module.exports = function isArguments(value) {
+	var str = toStr.call(value);
+	var isArgs = str === '[object Arguments]';
+	if (!isArgs) {
+		isArgs = str !== '[object Array]'
+			&& value !== null
+			&& typeof value === 'object'
+			&& typeof value.length === 'number'
+			&& value.length >= 0
+			&& toStr.call(value.callee) === '[object Function]';
+	}
+	return isArgs;
+};
+
+},{}],17:[function(_dereq_,module,exports){
+module.exports = extend
+
+function extend() {
+    var target = {}
+
+    for (var i = 0; i < arguments.length; i++) {
+        var source = arguments[i]
+
+        for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+                target[key] = source[key]
             }
         }
-        
-        if (typeof src === 'object' && src !== null) {
-            var dst = copy(src);
-            
-            parents.push(src);
-            nodes.push(dst);
-            
-            forEach(objectKeys(src), function (key) {
-                dst[key] = clone(src[key]);
-            });
-            
-            parents.pop();
-            nodes.pop();
-            return dst;
-        }
-        else {
-            return src;
-        }
-    })(this.value);
-};
+    }
 
-function walk (root, cb, immutable) {
-    var path = [];
-    var parents = [];
-    var alive = true;
-    
-    return (function walker (node_) {
-        var node = immutable ? copy(node_) : node_;
-        var modifiers = {};
-        
-        var keepGoing = true;
-        
-        var state = {
-            node : node,
-            node_ : node_,
-            path : [].concat(path),
-            parent : parents[parents.length - 1],
-            parents : parents,
-            key : path.slice(-1)[0],
-            isRoot : path.length === 0,
-            level : path.length,
-            circular : null,
-            update : function (x, stopHere) {
-                if (!state.isRoot) {
-                    state.parent.node[state.key] = x;
-                }
-                state.node = x;
-                if (stopHere) keepGoing = false;
-            },
-            'delete' : function (stopHere) {
-                delete state.parent.node[state.key];
-                if (stopHere) keepGoing = false;
-            },
-            remove : function (stopHere) {
-                if (isArray(state.parent.node)) {
-                    state.parent.node.splice(state.key, 1);
-                }
-                else {
-                    delete state.parent.node[state.key];
-                }
-                if (stopHere) keepGoing = false;
-            },
-            keys : null,
-            before : function (f) { modifiers.before = f },
-            after : function (f) { modifiers.after = f },
-            pre : function (f) { modifiers.pre = f },
-            post : function (f) { modifiers.post = f },
-            stop : function () { alive = false },
-            block : function () { keepGoing = false }
-        };
-        
-        if (!alive) return state;
-        
-        function updateState() {
-            if (typeof state.node === 'object' && state.node !== null) {
-                if (!state.keys || state.node_ !== state.node) {
-                    state.keys = objectKeys(state.node)
-                }
-                
-                state.isLeaf = state.keys.length == 0;
-                
-                for (var i = 0; i < parents.length; i++) {
-                    if (parents[i].node_ === node_) {
-                        state.circular = parents[i];
-                        break;
-                    }
-                }
-            }
-            else {
-                state.isLeaf = true;
-                state.keys = null;
-            }
-            
-            state.notLeaf = !state.isLeaf;
-            state.notRoot = !state.isRoot;
-        }
-        
-        updateState();
-        
-        // use return values to update if defined
-        var ret = cb.call(state, state.node);
-        if (ret !== undefined && state.update) state.update(ret);
-        
-        if (modifiers.before) modifiers.before.call(state, state.node);
-        
-        if (!keepGoing) return state;
-        
-        if (typeof state.node == 'object'
-        && state.node !== null && !state.circular) {
-            parents.push(state);
-            
-            updateState();
-            
-            forEach(state.keys, function (key, i) {
-                path.push(key);
-                
-                if (modifiers.pre) modifiers.pre.call(state, state.node[key], key);
-                
-                var child = walker(state.node[key]);
-                if (immutable && hasOwnProperty.call(state.node, key)) {
-                    state.node[key] = child.node;
-                }
-                
-                child.isLast = i == state.keys.length - 1;
-                child.isFirst = i == 0;
-                
-                if (modifiers.post) modifiers.post.call(state, child);
-                
-                path.pop();
-            });
-            parents.pop();
-        }
-        
-        if (modifiers.after) modifiers.after.call(state, state.node);
-        
-        return state;
-    })(root).node;
+    return target
 }
 
-function copy (src) {
-    if (typeof src === 'object' && src !== null) {
-        var dst;
-        
-        if (isArray(src)) {
-            dst = [];
-        }
-        else if (isDate(src)) {
-            dst = new Date(src.getTime ? src.getTime() : src);
-        }
-        else if (isRegExp(src)) {
-            dst = new RegExp(src);
-        }
-        else if (isError(src)) {
-            dst = { message: src.message };
-        }
-        else if (isBoolean(src)) {
-            dst = new Boolean(src);
-        }
-        else if (isNumber(src)) {
-            dst = new Number(src);
-        }
-        else if (isString(src)) {
-            dst = new String(src);
-        }
-        else if (Object.create && Object.getPrototypeOf) {
-            dst = Object.create(Object.getPrototypeOf(src));
-        }
-        else if (src.constructor === Object) {
-            dst = {};
-        }
-        else {
-            var proto =
-                (src.constructor && src.constructor.prototype)
-                || src.__proto__
-                || {}
-            ;
-            var T = function () {};
-            T.prototype = proto;
-            dst = new T;
-        }
-        
-        forEach(objectKeys(src), function (key) {
-            dst[key] = src[key];
-        });
-        return dst;
-    }
-    else return src;
-}
-
-var objectKeys = Object.keys || function keys (obj) {
-    var res = [];
-    for (var key in obj) res.push(key)
-    return res;
-};
-
-function toS (obj) { return Object.prototype.toString.call(obj) }
-function isDate (obj) { return toS(obj) === '[object Date]' }
-function isRegExp (obj) { return toS(obj) === '[object RegExp]' }
-function isError (obj) { return toS(obj) === '[object Error]' }
-function isBoolean (obj) { return toS(obj) === '[object Boolean]' }
-function isNumber (obj) { return toS(obj) === '[object Number]' }
-function isString (obj) { return toS(obj) === '[object String]' }
-
-var isArray = Array.isArray || function isArray (xs) {
-    return Object.prototype.toString.call(xs) === '[object Array]';
-};
-
-var forEach = function (xs, fn) {
-    if (xs.forEach) return xs.forEach(fn)
-    else for (var i = 0; i < xs.length; i++) {
-        fn(xs[i], i, xs);
-    }
-};
-
-forEach(objectKeys(Traverse.prototype), function (key) {
-    traverse[key] = function (obj) {
-        var args = [].slice.call(arguments, 1);
-        var t = new Traverse(obj);
-        return t[key].apply(t, args);
-    };
-});
-
-var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
-    return key in obj;
-};
-
-},{}],14:[function(_dereq_,module,exports){
+},{}],18:[function(_dereq_,module,exports){
 /*
   Copyright (C) 2012-2013 Yusuke Suzuki <utatane.tea@gmail.com>
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
@@ -6126,7 +5950,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 }(exports));
 /* vim: set sw=4 ts=4 et tw=80 : */
 
-},{"./package.json":15}],15:[function(_dereq_,module,exports){
+},{"./package.json":19}],19:[function(_dereq_,module,exports){
 module.exports={
   "name": "estraverse",
   "description": "ECMAScript JS AST traversal functions",
@@ -6194,7 +6018,7 @@ module.exports={
   "readme": "ERROR: No README data found!"
 }
 
-},{}],16:[function(_dereq_,module,exports){
+},{}],20:[function(_dereq_,module,exports){
 
 var indexOf = [].indexOf;
 
