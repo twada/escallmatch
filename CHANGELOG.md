@@ -1,9 +1,13 @@
+### [1.3.1](https://github.com/twada/escallmatch/releases/tag/v1.3.1) (2015-04-17)
+
+
+* update espurify to 1.2.0 [0b8866e](https://github.com/twada/escallmatch/commit/0b8866e7f06a0c4e7e7073bc29a4ec3a77c08805)
+
+
 ## [1.3.0](https://github.com/twada/escallmatch/releases/tag/v1.3.0) (2015-04-15)
 
 
-#### Features
-
-*update esprima and estraverse ([ea7006d2](https://github.com/twada/escallmatch/commit/ea7006d22e289fa659684203e94badbfedd150b0))
+* update esprima and estraverse ([ea7006d2](https://github.com/twada/escallmatch/commit/ea7006d22e289fa659684203e94badbfedd150b0))
 
 
 ## [1.2.0](https://github.com/twada/escallmatch/releases/tag/v1.2.0) (2015-04-12)
