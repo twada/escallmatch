@@ -14,7 +14,7 @@
     "array-map": "0.0.0",
     "array-reduce": "0.0.0",
     "deep-equal": "^1.0.0",
-    "esprima": "^2.1.0",
+    "esprima": "^2.0.0",
     "espurify": "^1.2.0",
     "estraverse": "^4.0.0",
     "indexof": "0.0.1"
