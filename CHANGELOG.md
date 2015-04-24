@@ -1,3 +1,9 @@
+### [1.3.2](https://github.com/twada/escallmatch/releases/tag/v1.3.2) (2015-04-24)
+
+
+* update estraverse to 4.0.0 [e3af6ec1](https://github.com/twada/escallmatch/commit/e3af6ec1a4e4c14d281dbfe3805b4b37e4ddb01e)
+
+
 ### [1.3.1](https://github.com/twada/escallmatch/releases/tag/v1.3.1) (2015-04-17)
 
 
