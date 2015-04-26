@@ -73,7 +73,7 @@ Pull-requests, issue reports and patches are always welcomed.
 API
 ---------------------------------------
 
-### var matcher = escallmatch(signatureStr)
+### var matcher = escallmatch(signatureStr, [options])
 
 Create matcher object for a given function/method signature string.
 
@@ -84,6 +84,20 @@ var matcher = escallmatch('assert.equal(actual, expected, [message])');
 Any arguments enclosed in bracket (for example, `[message]`) means optional parameters. Without bracket means mandatory parameters.
 
 Returns `matcher` object having four methods, `test`, `matchArgument`, `calleeAst`, and `argumentSignatures`.
+
+
+#### options
+
+an `object` for configuration options. If not passed, default options will be used.
+
+
+#### options.visitorKeys
+
+| type     | default value |
+|:---------|:--------------|
+| `object` | (return value of `estraverse.VisitorKeys`)   |
+
+VisitorKeys for AST traversal. See [estraverse.VisitorKeys](https://github.com/estools/estraverse/blob/4.0.0/estraverse.js#L217-L288) and [babel.types.VISITOR_KEYS](https://github.com/babel/babel/blob/v5.1.11/src/babel/types/visitor-keys.json).
 
 
 ### var isMatched = matcher.test(node)
