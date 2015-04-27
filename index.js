@@ -40,7 +40,7 @@ function Matcher (signatureAst, options) {
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = isCalleeMatched(this.signatureAst, this.signatureCalleeDepth, currentNode, this.visitorKeys),
+    var calleeMatched = this.isCalleeMatched(currentNode),
         numArgs;
     if (calleeMatched) {
         numArgs = currentNode.arguments.length;
@@ -96,14 +96,14 @@ function toArgumentSignature (argSignatureNode) {
     }
 }
 
-function isCalleeMatched(callSignature, signatureCalleeDepth, node, visitorKeys) {
+Matcher.prototype.isCalleeMatched = function (node) {
     if (!isCallExpression(node)) {
         return false;
     }
-    if (!isSameAstDepth(node.callee, signatureCalleeDepth, visitorKeys)) {
+    if (!isSameAstDepth(node.callee, this.signatureCalleeDepth, this.visitorKeys)) {
         return false;
     }
-    return deepEqual(espurify(callSignature.callee), espurify(node.callee));
+    return deepEqual(espurify(this.signatureAst.callee), espurify(node.callee));
 }
 
 function isSameAstDepth (ast, depth, visitorKeys) {
