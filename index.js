@@ -26,20 +26,21 @@ var esprima = require('esprima'),
     duplicatedArgMessage = 'Duplicate argument name: ',
     invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
-function createMatcher (signatureStr) {
+function createMatcher (signatureStr, options) {
     var ast = extractExpressionFrom(esprima.parse(signatureStr));
-    return new Matcher(ast);
+    return new Matcher(ast, options || {});
 }
 
-function Matcher (signatureAst) {
+function Matcher (signatureAst, options) {
+    this.visitorKeys = options.visitorKeys || estraverse.VisitorKeys;
     this.signatureAst = signatureAst;
-    this.signatureCalleeDepth = astDepth(signatureAst.callee);
+    this.signatureCalleeDepth = astDepth(signatureAst.callee, this.visitorKeys);
     this.numMaxArgs = this.signatureAst.arguments.length;
     this.numMinArgs = filter(this.signatureAst.arguments, identifiers).length;
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = isCalleeMatched(this.signatureAst, this.signatureCalleeDepth, currentNode),
+    var calleeMatched = isCalleeMatched(this.signatureAst, this.signatureCalleeDepth, currentNode, this.visitorKeys),
         numArgs;
     if (calleeMatched) {
         numArgs = currentNode.arguments.length;
@@ -95,19 +96,20 @@ function toArgumentSignature (argSignatureNode) {
     }
 }
 
-function isCalleeMatched(callSignature, signatureCalleeDepth, node) {
+function isCalleeMatched(callSignature, signatureCalleeDepth, node, visitorKeys) {
     if (!isCallExpression(node)) {
         return false;
     }
-    if (!isSameAstDepth(node.callee, signatureCalleeDepth)) {
+    if (!isSameAstDepth(node.callee, signatureCalleeDepth, visitorKeys)) {
         return false;
     }
     return deepEqual(espurify(callSignature.callee), espurify(node.callee));
 }
 
-function isSameAstDepth (ast, depth) {
+function isSameAstDepth (ast, depth, visitorKeys) {
     var currentDepth = 0;
     estraverse.traverse(ast, {
+        keys: visitorKeys,
         enter: function (currentNode, parentNode) {
             var path = this.path(),
                 pathDepth = path ? path.length : 0;
@@ -122,9 +124,10 @@ function isSameAstDepth (ast, depth) {
     return (depth === currentDepth);
 }
 
-function astDepth (ast) {
+function astDepth (ast, visitorKeys) {
     var maxDepth = 0;
     estraverse.traverse(ast, {
+        keys: visitorKeys,
         enter: function (currentNode, parentNode) {
             var path = this.path(),
                 pathDepth = path ? path.length : 0;
