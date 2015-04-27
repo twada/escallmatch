@@ -63,6 +63,8 @@
   "scripts": {
     "bower": "bower install --config.interactive=false",
     "lint": "gulp lint",
+    "unit": "gulp unit",
+    "watch": "gulp watch",
     "test": "gulp test"
   }
 }
