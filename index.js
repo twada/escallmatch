@@ -79,23 +79,6 @@ Matcher.prototype.argumentSignatures = function () {
     return map(this.signatureAst.arguments, toArgumentSignature);
 };
 
-function toArgumentSignature (argSignatureNode) {
-    switch(argSignatureNode.type) {
-    case syntax.Identifier:
-        return {
-            name: argSignatureNode.name,
-            kind: 'mandatory'
-        };
-    case syntax.ArrayExpression:
-        return {
-            name: argSignatureNode.elements[0].name,
-            kind: 'optional'
-        };
-    default:
-        return null;
-    }
-}
-
 Matcher.prototype.isCalleeMatched = function (node) {
     if (!isCallExpression(node)) {
         return false;
@@ -124,6 +107,23 @@ Matcher.prototype.isSameDepthAsSignatureCallee = function (ast) {
     });
     return (depth === currentDepth);
 };
+
+function toArgumentSignature (argSignatureNode) {
+    switch(argSignatureNode.type) {
+    case syntax.Identifier:
+        return {
+            name: argSignatureNode.name,
+            kind: 'mandatory'
+        };
+    case syntax.ArrayExpression:
+        return {
+            name: argSignatureNode.elements[0].name,
+            kind: 'optional'
+        };
+    default:
+        return null;
+    }
+}
 
 function astDepth (ast, visitorKeys) {
     var maxDepth = 0;
