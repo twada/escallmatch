@@ -100,16 +100,17 @@ Matcher.prototype.isCalleeMatched = function (node) {
     if (!isCallExpression(node)) {
         return false;
     }
-    if (!isSameAstDepth(node.callee, this.signatureCalleeDepth, this.visitorKeys)) {
+    if (!this.isSameDepthAsSignatureCallee(node.callee)) {
         return false;
     }
     return deepEqual(espurify(this.signatureAst.callee), espurify(node.callee));
-}
+};
 
-function isSameAstDepth (ast, depth, visitorKeys) {
+Matcher.prototype.isSameDepthAsSignatureCallee = function (ast) {
+    var depth = this.signatureCalleeDepth;
     var currentDepth = 0;
     estraverse.traverse(ast, {
-        keys: visitorKeys,
+        keys: this.visitorKeys,
         enter: function (currentNode, parentNode) {
             var path = this.path(),
                 pathDepth = path ? path.length : 0;
@@ -122,7 +123,7 @@ function isSameAstDepth (ast, depth, visitorKeys) {
         }
     });
     return (depth === currentDepth);
-}
+};
 
 function astDepth (ast, visitorKeys) {
     var maxDepth = 0;
