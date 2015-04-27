@@ -1,3 +1,11 @@
+## [1.4.0](https://github.com/twada/escallmatch/releases/tag/v1.4.0) (2015-04-27)
+
+
+#### Features
+
+* [customize AST Node visitor via `options.visitorKeys`](https://github.com/twada/escallmatch/pull/3)
+
+
 ### [1.3.2](https://github.com/twada/escallmatch/releases/tag/v1.3.2) (2015-04-24)
 
 
