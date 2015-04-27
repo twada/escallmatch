@@ -27,20 +27,21 @@ var esprima = _dereq_('esprima'),
     duplicatedArgMessage = 'Duplicate argument name: ',
     invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
-function createMatcher (signatureStr) {
+function createMatcher (signatureStr, options) {
     var ast = extractExpressionFrom(esprima.parse(signatureStr));
-    return new Matcher(ast);
+    return new Matcher(ast, options || {});
 }
 
-function Matcher (signatureAst) {
+function Matcher (signatureAst, options) {
+    this.visitorKeys = options.visitorKeys || estraverse.VisitorKeys;
     this.signatureAst = signatureAst;
-    this.signatureCalleeDepth = astDepth(signatureAst.callee);
+    this.signatureCalleeDepth = astDepth(signatureAst.callee, this.visitorKeys);
     this.numMaxArgs = this.signatureAst.arguments.length;
     this.numMinArgs = filter(this.signatureAst.arguments, identifiers).length;
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = isCalleeMatched(this.signatureAst, this.signatureCalleeDepth, currentNode),
+    var calleeMatched = this.isCalleeMatched(currentNode),
         numArgs;
     if (calleeMatched) {
         numArgs = currentNode.arguments.length;
@@ -79,6 +80,35 @@ Matcher.prototype.argumentSignatures = function () {
     return map(this.signatureAst.arguments, toArgumentSignature);
 };
 
+Matcher.prototype.isCalleeMatched = function (node) {
+    if (!isCallExpression(node)) {
+        return false;
+    }
+    if (!this.isSameDepthAsSignatureCallee(node.callee)) {
+        return false;
+    }
+    return deepEqual(espurify(this.signatureAst.callee), espurify(node.callee));
+};
+
+Matcher.prototype.isSameDepthAsSignatureCallee = function (ast) {
+    var depth = this.signatureCalleeDepth;
+    var currentDepth = 0;
+    estraverse.traverse(ast, {
+        keys: this.visitorKeys,
+        enter: function (currentNode, parentNode) {
+            var path = this.path(),
+                pathDepth = path ? path.length : 0;
+            if (currentDepth < pathDepth) {
+                currentDepth = pathDepth;
+            }
+            if (depth < currentDepth) {
+                this['break']();
+            }
+        }
+    });
+    return (depth === currentDepth);
+};
+
 function toArgumentSignature (argSignatureNode) {
     switch(argSignatureNode.type) {
     case syntax.Identifier:
@@ -96,36 +126,10 @@ function toArgumentSignature (argSignatureNode) {
     }
 }
 
-function isCalleeMatched(callSignature, signatureCalleeDepth, node) {
-    if (!isCallExpression(node)) {
-        return false;
-    }
-    if (!isSameAstDepth(node.callee, signatureCalleeDepth)) {
-        return false;
-    }
-    return deepEqual(espurify(callSignature.callee), espurify(node.callee));
-}
-
-function isSameAstDepth (ast, depth) {
-    var currentDepth = 0;
-    estraverse.traverse(ast, {
-        enter: function (currentNode, parentNode) {
-            var path = this.path(),
-                pathDepth = path ? path.length : 0;
-            if (currentDepth < pathDepth) {
-                currentDepth = pathDepth;
-            }
-            if (depth < currentDepth) {
-                this['break']();
-            }
-        }
-    });
-    return (depth === currentDepth);
-}
-
-function astDepth (ast) {
+function astDepth (ast, visitorKeys) {
     var maxDepth = 0;
     estraverse.traverse(ast, {
+        keys: visitorKeys,
         enter: function (currentNode, parentNode) {
             var path = this.path(),
                 pathDepth = path ? path.length : 0;
