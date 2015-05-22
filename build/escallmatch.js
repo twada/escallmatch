@@ -12,20 +12,20 @@
 'use strict';
 /* jshint -W024 */
 
-var esprima = _dereq_('esprima'),
-    estraverse = _dereq_('estraverse'),
-    espurify = _dereq_('espurify'),
-    syntax = estraverse.Syntax,
-    hasOwn = Object.prototype.hasOwnProperty,
-    forEach = _dereq_('array-foreach'),
-    map = _dereq_('array-map'),
-    filter = _dereq_('array-filter'),
-    reduce = _dereq_('array-reduce'),
-    indexOf = _dereq_('indexof'),
-    deepEqual = _dereq_('deep-equal'),
-    notCallExprMessage = 'Argument should be in the form of CallExpression',
-    duplicatedArgMessage = 'Duplicate argument name: ',
-    invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
+var esprima = _dereq_('esprima');
+var estraverse = _dereq_('estraverse');
+var espurify = _dereq_('espurify');
+var syntax = estraverse.Syntax;
+var hasOwn = Object.prototype.hasOwnProperty;
+var forEach = _dereq_('array-foreach');
+var map = _dereq_('array-map');
+var filter = _dereq_('array-filter');
+var reduce = _dereq_('array-reduce');
+var indexOf = _dereq_('indexof');
+var deepEqual = _dereq_('deep-equal');
+var notCallExprMessage = 'Argument should be in the form of CallExpression';
+var duplicatedArgMessage = 'Duplicate argument name: ';
+var invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
 function createMatcher (signatureStr, options) {
     var ast = extractExpressionFrom(esprima.parse(signatureStr));
@@ -41,8 +41,8 @@ function Matcher (signatureAst, options) {
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = this.isCalleeMatched(currentNode),
-        numArgs;
+    var calleeMatched = this.isCalleeMatched(currentNode);
+    var numArgs;
     if (calleeMatched) {
         numArgs = currentNode.arguments.length;
         return this.numMinArgs <= numArgs && numArgs <= this.numMaxArgs;
@@ -96,8 +96,8 @@ Matcher.prototype.isSameDepthAsSignatureCallee = function (ast) {
     estraverse.traverse(ast, {
         keys: this.visitorKeys,
         enter: function (currentNode, parentNode) {
-            var path = this.path(),
-                pathDepth = path ? path.length : 0;
+            var path = this.path();
+            var pathDepth = path ? path.length : 0;
             if (currentDepth < pathDepth) {
                 currentDepth = pathDepth;
             }
@@ -131,8 +131,8 @@ function astDepth (ast, visitorKeys) {
     estraverse.traverse(ast, {
         keys: visitorKeys,
         enter: function (currentNode, parentNode) {
-            var path = this.path(),
-                pathDepth = path ? path.length : 0;
+            var path = this.path();
+            var pathDepth = path ? path.length : 0;
             if (maxDepth < pathDepth) {
                 maxDepth = pathDepth;
             }
@@ -215,7 +215,7 @@ module.exports = createMatcher;
  */
 
 module.exports = function (arr, fn, self) {
-  if (arr.filter) return arr.filter(fn);
+  if (arr.filter) return arr.filter(fn, self);
   if (void 0 === arr || null === arr) throw new TypeError;
   if ('function' != typeof fn) throw new TypeError;
   var ret = [];
@@ -6217,6 +6217,7 @@ function extend() {
         LabeledStatement: 'LabeledStatement',
         LogicalExpression: 'LogicalExpression',
         MemberExpression: 'MemberExpression',
+        MetaProperty: 'MetaProperty',
         MethodDefinition: 'MethodDefinition',
         ModuleSpecifier: 'ModuleSpecifier',
         NewExpression: 'NewExpression',
@@ -6290,6 +6291,7 @@ function extend() {
         LabeledStatement: ['label', 'body'],
         LogicalExpression: ['left', 'right'],
         MemberExpression: ['object', 'property'],
+        MetaProperty: ['meta', 'property'],
         MethodDefinition: ['key', 'value'],
         ModuleSpecifier: [],
         NewExpression: ['callee', 'arguments'],
@@ -6878,7 +6880,7 @@ module.exports={
   "description": "ECMAScript JS AST traversal functions",
   "homepage": "https://github.com/estools/estraverse",
   "main": "estraverse.js",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "engines": {
     "node": ">=0.10.0"
   },
@@ -6894,7 +6896,7 @@ module.exports={
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/estools/estraverse.git"
+    "url": "git+ssh://git@github.com/estools/estraverse.git"
   },
   "devDependencies": {
     "chai": "^2.1.1",
@@ -6919,25 +6921,26 @@ module.exports={
     "lint": "jshint estraverse.js",
     "unit-test": "mocha --compilers coffee:coffee-script/register"
   },
-  "gitHead": "a5535660496d54a708ed4810e4c3b6c1f2761d81",
+  "gitHead": "347d52996336719b5910c7ffb5ff3ea8ecb87cf3",
   "bugs": {
     "url": "https://github.com/estools/estraverse/issues"
   },
-  "_id": "estraverse@4.0.0",
-  "_shasum": "ab96dd6bef5dc7958cec1d7d45085dd5c8f1eda1",
+  "_id": "estraverse@4.1.0",
+  "_shasum": "40f23a76092041be6467d7f235c933b670766e05",
   "_from": "estraverse@>=4.0.0 <5.0.0",
-  "_npmVersion": "2.7.4",
-  "_nodeVersion": "0.12.2",
+  "_npmVersion": "2.8.3",
+  "_nodeVersion": "1.8.1",
   "_npmUser": {
     "name": "constellation",
     "email": "utatane.tea@gmail.com"
   },
   "dist": {
-    "shasum": "ab96dd6bef5dc7958cec1d7d45085dd5c8f1eda1",
-    "tarball": "http://registry.npmjs.org/estraverse/-/estraverse-4.0.0.tgz"
+    "shasum": "40f23a76092041be6467d7f235c933b670766e05",
+    "tarball": "http://registry.npmjs.org/estraverse/-/estraverse-4.1.0.tgz"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/estraverse/-/estraverse-4.0.0.tgz"
+  "_resolved": "https://registry.npmjs.org/estraverse/-/estraverse-4.1.0.tgz",
+  "readme": "ERROR: No README data found!"
 }
 
 },{}],20:[function(_dereq_,module,exports){
