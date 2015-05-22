@@ -19,10 +19,10 @@ Creating CallExpression matcher for method signature `'assert.equal(actual, expe
 Then match against `path/to/some_test.js`.
 
 ```javascript
-var escallmatch = require('escallmatch'),
-    esprima = require('esprima'),
-    estraverse = require('estraverse'),
-    fs = require('fs');
+var escallmatch = require('escallmatch');
+var esprima = require('esprima');
+var estraverse = require('estraverse');
+var fs = require('fs');
 
 var matcher = escallmatch('assert.equal(actual, expected, [message])');
 
@@ -46,11 +46,11 @@ estraverse.traverse(esprima.parse(fs.readFileSync('path/to/some_test.js')), {
 where content of `path/to/some_test.js` is:
 
 ```javascript
-var assert = require('assert'),
-    anotherAssert = assert,
-    equal = assert.equal.bind(assert),
-    foo = '2',
-    bar = 2;
+var assert = require('assert');
+var anotherAssert = assert;
+var equal = assert.equal.bind(assert);
+var foo = '2';
+var bar = 2;
 
 assert.equal(foo, bar);  // matches
 assert.equal(bar, foo);  // matches

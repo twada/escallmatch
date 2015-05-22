@@ -11,20 +11,20 @@
 'use strict';
 /* jshint -W024 */
 
-var esprima = require('esprima'),
-    estraverse = require('estraverse'),
-    espurify = require('espurify'),
-    syntax = estraverse.Syntax,
-    hasOwn = Object.prototype.hasOwnProperty,
-    forEach = require('array-foreach'),
-    map = require('array-map'),
-    filter = require('array-filter'),
-    reduce = require('array-reduce'),
-    indexOf = require('indexof'),
-    deepEqual = require('deep-equal'),
-    notCallExprMessage = 'Argument should be in the form of CallExpression',
-    duplicatedArgMessage = 'Duplicate argument name: ',
-    invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
+var esprima = require('esprima');
+var estraverse = require('estraverse');
+var espurify = require('espurify');
+var syntax = estraverse.Syntax;
+var hasOwn = Object.prototype.hasOwnProperty;
+var forEach = require('array-foreach');
+var map = require('array-map');
+var filter = require('array-filter');
+var reduce = require('array-reduce');
+var indexOf = require('indexof');
+var deepEqual = require('deep-equal');
+var notCallExprMessage = 'Argument should be in the form of CallExpression';
+var duplicatedArgMessage = 'Duplicate argument name: ';
+var invalidFormMessage = 'Argument should be in the form of `name` or `[name]`';
 
 function createMatcher (signatureStr, options) {
     var ast = extractExpressionFrom(esprima.parse(signatureStr));
@@ -40,8 +40,8 @@ function Matcher (signatureAst, options) {
 }
 
 Matcher.prototype.test = function (currentNode) {
-    var calleeMatched = this.isCalleeMatched(currentNode),
-        numArgs;
+    var calleeMatched = this.isCalleeMatched(currentNode);
+    var numArgs;
     if (calleeMatched) {
         numArgs = currentNode.arguments.length;
         return this.numMinArgs <= numArgs && numArgs <= this.numMaxArgs;
@@ -95,8 +95,8 @@ Matcher.prototype.isSameDepthAsSignatureCallee = function (ast) {
     estraverse.traverse(ast, {
         keys: this.visitorKeys,
         enter: function (currentNode, parentNode) {
-            var path = this.path(),
-                pathDepth = path ? path.length : 0;
+            var path = this.path();
+            var pathDepth = path ? path.length : 0;
             if (currentDepth < pathDepth) {
                 currentDepth = pathDepth;
             }
@@ -130,8 +130,8 @@ function astDepth (ast, visitorKeys) {
     estraverse.traverse(ast, {
         keys: visitorKeys,
         enter: function (currentNode, parentNode) {
-            var path = this.path(),
-                pathDepth = path ? path.length : 0;
+            var path = this.path();
+            var pathDepth = path ? path.length : 0;
             if (maxDepth < pathDepth) {
                 maxDepth = pathDepth;
             }
