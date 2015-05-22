@@ -1,32 +1,32 @@
-var gulp = require('gulp'),
-    gutil = require('gulp-util'),
-    jshint = require('gulp-jshint'),
-    stylish = require('jshint-stylish'),
-    mocha = require('gulp-mocha'),
-    mochaPhantomJS = require('gulp-mocha-phantomjs'),
-    webserver = require('gulp-webserver'),
-    del = require('del'),
-    source = require('vinyl-source-stream'),
-    browserify = require('browserify'),
-    derequire = require('gulp-derequire'),
-    dereserve = require('gulp-dereserve'),
-    config = {
-        jshint: {
-            src: './index.js'
-        },
-        bundle: {
-            standalone: 'escallmatch',
-            srcFile: './index.js',
-            destDir: './build',
-            destName: 'escallmatch.js'
-        },
-        test: {
-            base: './test/',
-            pattern: '**/*test.js',
-            amd: 'test/test-amd.html',
-            browser: 'test/test-browser.html'
-        }
-    };
+var gulp = require('gulp');
+var gutil = require('gulp-util');
+var jshint = require('gulp-jshint');
+var stylish = require('jshint-stylish');
+var mocha = require('gulp-mocha');
+var mochaPhantomJS = require('gulp-mocha-phantomjs');
+var webserver = require('gulp-webserver');
+var del = require('del');
+var source = require('vinyl-source-stream');
+var browserify = require('browserify');
+var derequire = require('gulp-derequire');
+var dereserve = require('gulp-dereserve');
+var config = {
+    jshint: {
+        src: './index.js'
+    },
+    bundle: {
+        standalone: 'escallmatch',
+        srcFile: './index.js',
+        destDir: './build',
+        destName: 'escallmatch.js'
+    },
+    test: {
+        base: './test/',
+        pattern: '**/*test.js',
+        amd: 'test/test-amd.html',
+        browser: 'test/test-browser.html'
+    }
+};
 
 function runMochaSimply() {
     return gulp
