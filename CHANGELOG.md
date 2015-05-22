@@ -1,3 +1,9 @@
+### [1.4.1](https://github.com/twada/escallmatch/releases/tag/v1.4.1) (2015-05-22)
+
+
+* update array-filter to 1.0.0 [c02c33cc](https://github.com/twada/escallmatch/commit/c02c33cc7f1e02dd128d33f80b30e29975467b77)
+
+
 ## [1.4.0](https://github.com/twada/escallmatch/releases/tag/v1.4.0) (2015-04-27)
 
 
