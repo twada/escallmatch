@@ -3,12 +3,10 @@ escallmatch
 
 ECMAScript CallExpression matcher made from function/method signature
 
-[![Build Status](https://travis-ci.org/twada/escallmatch.svg?branch=master)](https://travis-ci.org/twada/escallmatch)
-[![NPM version](https://badge.fury.io/js/escallmatch.svg)](http://badge.fury.io/js/escallmatch)
-[![Dependency Status](https://gemnasium.com/twada/escallmatch.svg)](https://gemnasium.com/twada/escallmatch)
-[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://twada.mit-license.org/)
-[![Built with Gulp](http://img.shields.io/badge/built_with-gulp-brightgreen.svg)](http://gulpjs.com/)
-
+[![Build Status][travis-image]][travis-url]
+[![NPM version][npm-image]][npm-url]
+[![Dependency Status][depstat-image]][depstat-url]
+[![License][license-image]][license-url]
 
 
 EXAMPLE
@@ -167,3 +165,16 @@ AUTHOR
 LICENSE
 ---------------------------------------
 Licensed under the [MIT](http://twada.mit-license.org/) license.
+
+
+[npm-url]: https://npmjs.org/package/escallmatch
+[npm-image]: https://badge.fury.io/js/escallmatch.svg
+
+[travis-url]: http://travis-ci.org/twada/escallmatch
+[travis-image]: https://secure.travis-ci.org/twada/escallmatch.svg?branch=master
+
+[depstat-url]: https://gemnasium.com/twada/escallmatch
+[depstat-image]: https://gemnasium.com/twada/escallmatch.svg
+
+[license-url]: http://twada.mit-license.org/2014-2015
+[license-image]: http://img.shields.io/badge/license-MIT-brightgreen.svg
