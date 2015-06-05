@@ -20,17 +20,17 @@
     "indexof": "0.0.1"
   },
   "devDependencies": {
-    "browserify": "^10.2.1",
+    "browserify": "^10.2.3",
     "del": "^1.2.0",
-    "gulp": "^3.8.11",
+    "gulp": "^3.9.0",
     "gulp-derequire": "^2.1.0",
     "gulp-dereserve": "^0.2.0",
-    "gulp-jshint": "^1.10.0",
-    "gulp-mocha": "^2.0.1",
+    "gulp-jshint": "^1.11.0",
+    "gulp-mocha": "^2.1.1",
     "gulp-mocha-phantomjs": "^0.6.1",
-    "gulp-util": "^3.0.4",
+    "gulp-util": "^3.0.5",
     "gulp-webserver": "^0.9.1",
-    "jshint-stylish": "^1.0.2",
+    "jshint-stylish": "^2.0.0",
     "mocha": "^2.2.5",
     "vinyl-source-stream": "^1.1.0"
   },
