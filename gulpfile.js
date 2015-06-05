@@ -8,6 +8,7 @@ var webserver = require('gulp-webserver');
 var del = require('del');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
+var licensify = require('licensify');
 var derequire = require('gulp-derequire');
 var dereserve = require('gulp-dereserve');
 var config = {
@@ -51,7 +52,9 @@ gulp.task('clean_bundle', function (done) {
 });
 
 gulp.task('bundle', ['clean_bundle'], function() {
-    var bundleStream = browserify({entries: config.bundle.srcFile, standalone: config.bundle.standalone}).bundle();
+    var b = browserify({entries: config.bundle.srcFile, standalone: config.bundle.standalone});
+    b.plugin(licensify);
+    var bundleStream = b.bundle();
     return bundleStream
         .pipe(source(config.bundle.destName))
         .pipe(dereserve())
