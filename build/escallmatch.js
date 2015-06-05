@@ -1,3 +1,66 @@
+/**
+ * Modules in this bundle
+ * 
+ * array-filter:
+ *   license: MIT
+ *   author: Julian Gruber <mail@juliangruber.com>
+ *   maintainers: juliangruber <julian@juliangruber.com>
+ * 
+ * array-foreach:
+ *   license: MIT
+ *   author: Takuto Wada <takuto.wada@gmail.com>
+ * 
+ * array-map:
+ *   license: MIT
+ *   author: James Halliday <mail@substack.net>
+ *   maintainers: substack <mail@substack.net>
+ * 
+ * array-reduce:
+ *   license: MIT
+ *   author: James Halliday <mail@substack.net>
+ *   maintainers: substack <mail@substack.net>
+ * 
+ * deep-equal:
+ *   license: MIT
+ *   author: James Halliday <mail@substack.net>
+ *   maintainers: substack <mail@substack.net>
+ * 
+ * escallmatch:
+ *   license: MIT
+ *   author: Takuto Wada <takuto.wada@gmail.com>
+ * 
+ * esprima:
+ *   licenses: BSD
+ *   author: Ariya Hidayat <ariya.hidayat@gmail.com>
+ *   maintainers: ariya <ariya.hidayat@gmail.com>
+ * 
+ * espurify:
+ *   license: MIT
+ *   author: Takuto Wada <takuto.wada@gmail.com>
+ * 
+ * estraverse:
+ *   licenses: BSD
+ *   maintainers: constellation <utatane.tea@gmail.com>, michaelficarra <npm@michael.ficarra.me>
+ * 
+ * indexof:
+ *   maintainers: tjholowaychuk <tj@vision-media.ca>
+ * 
+ * isarray:
+ *   license: MIT
+ *   author: Julian Gruber <mail@juliangruber.com>
+ *   maintainers: juliangruber <julian@juliangruber.com>
+ * 
+ * object-keys:
+ *   license: MIT
+ *   author: Jordan Harband
+ *   maintainers: ljharb <ljharb@gmail.com>
+ * 
+ * xtend:
+ *   licenses: MIT
+ *   author: Raynos <raynos2@gmail.com>
+ *   contributors: Jake Verbaten, Matt Esch
+ * 
+ */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.escallmatch = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw (f.code="MODULE_NOT_FOUND", f)}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
  * escallmatch:
@@ -5827,7 +5890,7 @@ module.exports = {
     VariableDeclarator: ['type', 'id', 'init'],
     WhileStatement: ['type', 'test', 'body'],
     WithStatement: ['type', 'object', 'body'],
-    YieldExpression: ['type', 'argument']
+    YieldExpression: ['type', 'argument', 'delegate']
 };
 
 },{}],12:[function(_dereq_,module,exports){
@@ -5926,6 +5989,7 @@ module.exports = Array.isArray || function (arr) {
 // modified from https://github.com/es-shims/es5-shim
 var has = Object.prototype.hasOwnProperty;
 var toStr = Object.prototype.toString;
+var slice = Array.prototype.slice;
 var isArgs = _dereq_('./isArguments');
 var hasDontEnumBug = !({ 'toString': null }).propertyIsEnumerable('toString');
 var hasProtoEnumBug = function () {}.propertyIsEnumerable('prototype');
@@ -5985,6 +6049,21 @@ var keysShim = function keys(object) {
 keysShim.shim = function shimObjectKeys() {
 	if (!Object.keys) {
 		Object.keys = keysShim;
+	} else {
+		var keysWorksWithArguments = (function () {
+			// Safari 5.0 bug
+			return (Object.keys(arguments) || '').length === 2;
+		}(1, 2));
+		if (!keysWorksWithArguments) {
+			var originalKeys = Object.keys;
+			Object.keys = function keys(object) {
+				if (isArgs(object)) {
+					return originalKeys(slice.call(object));
+				} else {
+					return originalKeys(object);
+				}
+			};
+		}
 	}
 	return Object.keys || keysShim;
 };
@@ -6000,12 +6079,12 @@ module.exports = function isArguments(value) {
 	var str = toStr.call(value);
 	var isArgs = str === '[object Arguments]';
 	if (!isArgs) {
-		isArgs = str !== '[object Array]'
-			&& value !== null
-			&& typeof value === 'object'
-			&& typeof value.length === 'number'
-			&& value.length >= 0
-			&& toStr.call(value.callee) === '[object Function]';
+		isArgs = str !== '[object Array]' &&
+			value !== null &&
+			typeof value === 'object' &&
+			typeof value.length === 'number' &&
+			value.length >= 0 &&
+			toStr.call(value.callee) === '[object Function]';
 	}
 	return isArgs;
 };
