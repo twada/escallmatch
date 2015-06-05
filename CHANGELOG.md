@@ -1,3 +1,10 @@
+### [1.4.2](https://github.com/twada/escallmatch/releases/tag/v1.4.2) (2015-06-05)
+
+
+* update espurify to 1.3.0 ([0d3a925](https://github.com/twada/escallmatch/commit/0d3a925601c242f7093e1a1a45c6e342a6a71e0f))
+* use licensify to prepend license header ([e4a6981](https://github.com/twada/escallmatch/commit/e4a69810b1c693b4cf3b379b218e626a2c2894bb))
+
+
 ### [1.4.1](https://github.com/twada/escallmatch/releases/tag/v1.4.1) (2015-05-22)
 
 
