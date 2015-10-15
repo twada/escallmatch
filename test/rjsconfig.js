@@ -1,16 +1,11 @@
 var require = {
     paths: {
+        assert: '../build/assert',
         escallmatch: "../build/escallmatch",
-        esprima: '../bower_components/esprima/esprima',
-        estraverse: '../bower_components/estraverse/estraverse',
-        espurify: '../bower_components/espurify/build/espurify',
-        assert: "../bower_components/assert/assert",
+        esprima: '../node_modules/esprima/esprima',
+        estraverse: '../build/estraverse',
+        espurify: '../node_modules/espurify/build/espurify',
         mocha: "../bower_components/mocha/mocha",
         requirejs: "../bower_components/requirejs/require"
-    },
-    shim: {
-        assert: {
-            exports: "assert"
-        }
     }
 };

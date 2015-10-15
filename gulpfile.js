@@ -22,6 +22,18 @@ var config = {
         destDir: './build',
         destName: 'escallmatch.js'
     },
+    assert_bundle: {
+        standalone: 'assert',
+        require: 'assert',
+        destDir: './build',
+        destName: 'assert.js'
+    },
+    estraverse_bundle: {
+        standalone: 'estraverse',
+        srcFile: './node_modules/estraverse/estraverse.js',
+        destDir: './build',
+        destName: 'estraverse.js'
+    },
     test: {
         base: './test/',
         pattern: '**/*test.js',
@@ -29,6 +41,7 @@ var config = {
         browser: 'test/test-browser.html'
     }
 };
+var BUILDS = ['assert', 'estraverse'];
 
 function runMochaSimply() {
     return gulp
@@ -63,6 +76,27 @@ gulp.task('bundle', ['clean_bundle'], function() {
         .pipe(gulp.dest(config.bundle.destDir));
 });
 
+BUILDS.forEach(function (name) {
+    gulp.task('clean_' + name + '_bundle', function () {
+        del.sync([path.join(config[name + '_bundle'].destDir, config[name + '_bundle'].destName)]);
+    });
+    gulp.task(name + '_bundle', ['clean_' + name + '_bundle'], function() {
+        var b = browserify({standalone: config[name + '_bundle'].standalone});
+        if (config[name + '_bundle'].srcFile) {
+            b.add(config[name + '_bundle'].srcFile);
+        }
+        if (config[name + '_bundle'].require) {
+            b.require(config[name + '_bundle'].require);
+        }
+        return b.bundle()
+            .pipe(source(config[name + '_bundle'].destName))
+            .pipe(derequire())
+            .pipe(gulp.dest(config[name + '_bundle'].destDir));
+    });
+});
+gulp.task('clean_deps', BUILDS.map(function (name) { return 'clean_' + name + '_bundle'; }));
+gulp.task('build_deps', BUILDS.map(function (name) { return name + '_bundle'; }));
+
 gulp.task('lint', function() {
     return gulp.src(config.jshint.src)
         .pipe(jshint())
@@ -78,18 +112,18 @@ gulp.task('watch', function () {
     runMochaSimply();
 });
 
-gulp.task('test_amd', ['bundle'], function () {
+gulp.task('test_amd', ['bundle', 'build_deps'], function () {
     return gulp
         .src(config.test.amd)
         .pipe(mochaPhantomJS({reporter: 'dot'}));
 });
 
-gulp.task('test_browser', ['bundle'], function () {
+gulp.task('test_browser', ['bundle', 'build_deps'], function () {
     return gulp
         .src(config.test.browser)
         .pipe(mochaPhantomJS({reporter: 'dot'}));
 });
 
-gulp.task('clean', ['clean_bundle']);
+gulp.task('clean', ['clean_bundle', 'clean_deps']);
 
 gulp.task('test', ['lint', 'unit','test_browser','test_amd']);

@@ -26,12 +26,7 @@
     "url": "git://github.com/twada/escallmatch.git"
   },
   "devDependencies": {
-    "assert": "Jxck/assert",
-    "es5-shim": "~4.1.1",
-    "esprima": "~2.0.0",
-    "espurify": "~1.2.0",
-    "estraverse": "~1.9.0",
-    "mocha": "~2.2.4",
-    "requirejs": "~2.1.17"
+    "mocha": "~2.3.3",
+    "requirejs": "~2.1.20"
   }
 }
