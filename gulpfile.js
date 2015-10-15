@@ -6,6 +6,7 @@ var mocha = require('gulp-mocha');
 var mochaPhantomJS = require('gulp-mocha-phantomjs');
 var webserver = require('gulp-webserver');
 var del = require('del');
+var path = require('path');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var licensify = require('licensify');
@@ -47,8 +48,8 @@ gulp.task('serve', function() {
         }));
 });
 
-gulp.task('clean_bundle', function (done) {
-    del([config.bundle.destDir], done);
+gulp.task('clean_bundle', function () {
+    del.sync([path.join(config.bundle.destDir, config.bundle.destName)]);
 });
 
 gulp.task('bundle', ['clean_bundle'], function() {
