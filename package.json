@@ -20,7 +20,7 @@
     "indexof": "0.0.1"
   },
   "devDependencies": {
-    "browserify": "^11.2.0",
+    "browserify": "^12.0.1",
     "del": "^2.0.2",
     "gulp": "^3.9.0",
     "gulp-derequire": "^2.1.0",
