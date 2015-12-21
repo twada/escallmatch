@@ -4,3 +4,4 @@ npm-debug.log
 .idea/
 /build/assert.js
 /build/estraverse.js
+/local_build

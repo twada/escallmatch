@@ -16,22 +16,26 @@ var config = {
     jshint: {
         src: './index.js'
     },
+    dist: {
+        destDir: './build',
+        destName: 'escallmatch.js'
+    },
     bundle: {
         standalone: 'escallmatch',
         srcFile: './index.js',
-        destDir: './build',
+        destDir: './local_build',
         destName: 'escallmatch.js'
     },
     assert_bundle: {
         standalone: 'assert',
         require: 'assert',
-        destDir: './build',
+        destDir: './local_build',
         destName: 'assert.js'
     },
     estraverse_bundle: {
         standalone: 'estraverse',
         srcFile: './node_modules/estraverse/estraverse.js',
-        destDir: './build',
+        destDir: './local_build',
         destName: 'estraverse.js'
     },
     test: {
@@ -124,6 +128,16 @@ gulp.task('test_browser', ['bundle', 'build_deps'], function () {
         .pipe(mochaPhantomJS({reporter: 'dot'}));
 });
 
-gulp.task('clean', ['clean_bundle', 'clean_deps']);
+gulp.task('clean_dist', function () {
+    del.sync([config.dist.destDir]);
+});
+
+gulp.task('dist', ['clean_dist', 'bundle'], function () {
+    return gulp
+        .src(path.join(config.bundle.destDir, config.bundle.destName))
+        .pipe(gulp.dest(config.dist.destDir));
+});
+
+gulp.task('clean', ['clean_dist', 'clean_bundle', 'clean_deps']);
 
 gulp.task('test', ['lint', 'unit','test_browser','test_amd']);
