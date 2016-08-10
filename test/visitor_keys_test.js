@@ -1,8 +1,8 @@
 'use strict';
 
 var escallmatch = require('..');
-var estraverse = require('estraverse');
 var assert = require('assert');
+var babelTypes = require('babel-types');
 
 //// original code of jsx_test.json:
 // var assert = require('power-assert');
@@ -11,33 +11,10 @@ var assert = require('assert');
 //     (<CheckboxWithLabel labelOn="On" labelOff="Off"/>).assert.equals('Off');
 // });
 var ast = require('./jsx_test.json');
-
-function matchAst (ast, matcher, visitorKeys) {
-    var calls = [];
-    var args = [];
-    var captured = {};
-    estraverse.traverse(ast, {
-        keys: visitorKeys,
-        leave: function (currentNode, parentNode) {
-            if (matcher.test(currentNode)) {
-                calls.push(currentNode);
-            }
-            var matched = matcher.matchArgument(currentNode, parentNode);
-            if (matched) {
-                args.push(matched);
-                captured[matched.name] = currentNode;
-            }
-        }
-    });
-    return {
-        calls: calls,
-        args: args,
-        captured: captured
-    };
-}
+var matchAst = require('./match_ast');
 
 it('custom visitorKeys', function () {
-    var visitorKeys = require('./visitor-keys.json');
+    var visitorKeys = babelTypes.VISITOR_KEYS;
     var matcher = escallmatch('assert.jsx.equal(value, [message])', { visitorKeys: visitorKeys });
     var matched;
     assert.doesNotThrow(function () {
