@@ -98,6 +98,24 @@ an `object` for configuration options. If not passed, default options will be us
 VisitorKeys for AST traversal. See [estraverse.VisitorKeys](https://github.com/estools/estraverse/blob/4.0.0/estraverse.js#L217-L288) and [babel.types.VISITOR_KEYS](https://github.com/babel/babel/blob/v5.1.11/src/babel/types/visitor-keys.json).
 
 
+#### options.astWhiteList
+
+| type     | default value |
+|:---------|:--------------|
+| `object` | N/A           |
+
+Type and property whitelist on creating AST clone. `astWhiteList` is an object containing NodeType as keys and properties as values.
+
+```js
+{
+    ArrayExpression: ['type', 'elements'],
+    ArrayPattern: ['type', 'elements'],
+    ArrowFunctionExpression: ['type', 'id', 'params', 'body', 'generator', 'expression'],
+    AssignmentExpression: ['type', 'operator', 'left', 'right'],
+    ...
+```
+
+
 ### var isMatched = matcher.test(node)
 
 Tests whether `node` matches the signature or not.
