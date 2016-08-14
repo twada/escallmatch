@@ -4,9 +4,9 @@
  * 
  * https://github.com/twada/escallmatch
  *
- * Copyright (c) 2014-2015 Takuto Wada
+ * Copyright (c) 2014-2016 Takuto Wada
  * Licensed under the MIT license.
- *   http://twada.mit-license.org/
+ *   https://github.com/twada/escallmatch/blob/master/LICENSE
  */
 'use strict';
 /* jshint -W024 */

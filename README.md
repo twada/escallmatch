@@ -182,7 +182,7 @@ AUTHOR
 
 LICENSE
 ---------------------------------------
-Licensed under the [MIT](http://twada.mit-license.org/) license.
+Licensed under the [MIT](https://github.com/twada/escallmatch/blob/master/LICENSE) license.
 
 
 [npm-url]: https://npmjs.org/package/escallmatch
@@ -194,5 +194,5 @@ Licensed under the [MIT](http://twada.mit-license.org/) license.
 [depstat-url]: https://gemnasium.com/twada/escallmatch
 [depstat-image]: https://gemnasium.com/twada/escallmatch.svg
 
-[license-url]: http://twada.mit-license.org/2014-2015
+[license-url]: https://github.com/twada/escallmatch/blob/master/LICENSE
 [license-image]: http://img.shields.io/badge/license-MIT-brightgreen.svg
