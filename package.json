@@ -40,11 +40,8 @@
     "CHANGELOG.md",
     "LICENSE",
     "README.md",
-    "gulpfile.js",
     "index.js",
-    "build/escallmatch.js",
-    "package.json",
-    "test"
+    "build/escallmatch.js"
   ],
   "homepage": "https://github.com/twada/escallmatch",
   "keywords": [
