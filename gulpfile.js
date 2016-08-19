@@ -9,6 +9,7 @@ var del = require('del');
 var path = require('path');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
+var packageJsonVersionify = require('package-json-versionify');
 var licensify = require('licensify');
 var derequire = require('gulp-derequire');
 var dereserve = require('gulp-dereserve');
@@ -72,6 +73,7 @@ gulp.task('clean_bundle', function () {
 gulp.task('bundle', ['clean_bundle'], function() {
     var b = browserify({entries: config.bundle.srcFile, standalone: config.bundle.standalone});
     b.plugin(licensify);
+    b.transform(packageJsonVersionify, {global: true});
     var bundleStream = b.bundle();
     return bundleStream
         .pipe(source(config.bundle.destName))
@@ -86,6 +88,7 @@ BUILDS.forEach(function (name) {
     });
     gulp.task(name + '_bundle', ['clean_' + name + '_bundle'], function() {
         var b = browserify({standalone: config[name + '_bundle'].standalone});
+        b.transform(packageJsonVersionify, {global: true});
         if (config[name + '_bundle'].srcFile) {
             b.add(config[name + '_bundle'].srcFile);
         }
