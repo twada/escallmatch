@@ -9,7 +9,7 @@
   },
   "bugs": "https://github.com/twada/escallmatch/issues",
   "dependencies": {
-    "call-matcher": "^0.1.0",
+    "call-matcher": "^1.0.0",
     "esprima": "^2.0.0"
   },
   "devDependencies": {
