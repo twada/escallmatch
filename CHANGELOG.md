@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/twada/escallmatch/releases/tag/v1.5.0) (2016-08-21)
+
+
+* [Extract call-matcher module out](https://github.com/twada/escallmatch/pull/6)
+
+
 ### [1.4.2](https://github.com/twada/escallmatch/releases/tag/v1.4.2) (2015-06-05)
 
 
